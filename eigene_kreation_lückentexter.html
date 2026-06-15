@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Cloze | Lückentext Generator</title>
+    <style>
+        /* ================= VARIABLES & THEME ================= */
+        :root {
+            --hue-primary: 250;
+            --primary: hsl(var(--hue-primary), 85%, 65%);
+            --primary-hover: hsl(var(--hue-primary), 85%, 55%);
+            --success: #10b981;
+            --warning: #f97316;
+            --danger: #ef4444;
+            
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --surface: #18181b;
+            --surface-hover: #27272a;
+            --border: #3f3f46;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --input-bg: #000000;
+        }
+
+        [data-theme="light"] {
+            --bg: #f4f4f5;
+            --surface: #ffffff;
+            --surface-hover: #f4f4f5;
+            --border: #e4e4e7;
+            --text-main: #09090b;
+            --text-muted: #71717a;
+            --input-bg: #f8fafc;
+        }
+
+        /* ================= GLOBAL ================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            transition: background-color var(--transition), color var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ================= HEADER & NAV ================= */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--surface-hover);
+            color: var(--text-main);
+        }
+
+        /* ================= LAYOUT ================= */
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        
+        .view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= SETUP VIEW ================= */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        }
+
+        .hint-box {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .hint-box code {
+            background: var(--bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: var(--transition);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        /* ================= BUTTONS ================= */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface-hover);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+        }
+
+        /* ================= QUIZ VIEW ================= */
+        .cloze-text {
+            font-size: 1.2rem;
+            line-height: 2.4;
+            color: var(--text-main);
+        }
+
+        /* Wrapper for Inputs & Tooltips */
+        .gap-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin: 0 4px;
+            vertical-align: middle;
+        }
+
+        .gap-input {
+            background: var(--input-bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 4px 12px;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            transition: var(--transition);
+            min-width: 60px;
+        }
+
+        .gap-input:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+
+        /* States */
+        .gap-input.correct {
+            border-color: var(--success);
+            color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+            pointer-events: none;
+        }
+
+        .gap-input.incorrect {
+            border-color: var(--danger);
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+            padding-right: 30px; /* Space for the icon */
+        }
+
+        /* Hint Icon & Tooltip */
+        .hint-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.2s;
+            z-index: 10;
+        }
+
+        .gap-input.incorrect ~ .hint-icon {
+            opacity: 1;
+            pointer-events: auto;
+            animation: popIn 0.3s cubic-bezier(0.17, 0.67, 0.35, 1.5);
+        }
+
+        .tooltip-text {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--text-main);
+            color: var(--bg);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            z-index: 20;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            pointer-events: none;
+        }
+
+        .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--text-main) transparent transparent transparent;
+        }
+
+        .hint-icon:hover ~ .tooltip-text,
+        .hint-icon:active ~ .tooltip-text {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @keyframes popIn {
+            0% { transform: translateY(-50%) scale(0); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        /* ================= PROGRESS & FOOTER ================= */
+        .quiz-footer {
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+        }
+
+        .progress-container {
+            margin-bottom: 24px;
+            display: none; /* Hidden until submitted */
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            border-radius: 6px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s;
+        }
+
+        /* ================= CONFETTI ================= */
+        canvas#confetti {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999;
+        }
+
+        /* ================= RESPONSIVE ================= */
+        @media (max-width: 600px) {
+            .actions { flex-direction: column-reverse; }
+            .btn { width: 100%; }
+            .card { padding: 20px; }
+            .cloze-text { font-size: 1.05rem; }
+            .gap-input { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo">Smart Cloze</div>
+            <button class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
+                <svg id="moon-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+                <svg id="sun-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="display:none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- View 1: Setup -->
+        <section id="setupView" class="view active">
+            <div class="card">
+                <div class="hint-box">
+                    💡 <strong>Tipp:</strong> Markiere Wörter oder Textpassagen mit eckigen Klammern, um Lücken zu erzeugen.<br>
+                    Beispiel: <code>Die Hauptstadt von Deutschland ist [Berlin].</code>
+                </div>
+                
+                <textarea id="textInput" placeholder="Füge hier deinen Text ein..."></textarea>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="startQuiz()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Lückentext Starten
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 2: Quiz -->
+        <section id="quizView" class="view">
+            <div class="card">
+                <div id="clozeContainer" class="cloze-text"></div>
+                
+                <div class="quiz-footer">
+                    <!-- Progress Bar (Visible after submit) -->
+                    <div id="progressContainer" class="progress-container">
+                        <div class="progress-header">
+                            <span id="progressText">Ergebnis</span>
+                            <span id="progressPercentage">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="progressBar" class="progress-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="actions">
+                        <button class="btn btn-secondary" onclick="goBack()">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            Zurück
+                        </button>
+                        <button class="btn btn-primary" id="submitBtn" onclick="submitQuiz()">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Abgeben
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <canvas id="confetti" style="display: none;"></canvas>
+
+    <script>
+        // ================= STATE =================
+        let correctAnswers = [];
+        let totalGaps = 0;
+
+        // ================= THEME LOGIC =================
+        const themeBtn = document.getElementById('themeBtn');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const root = document.documentElement;
+
+        function setTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                moonIcon.style.display = 'none';
+                sunIcon.style.display = 'block';
+            } else {
+                moonIcon.style.display = 'block';
+                sunIcon.style.display = 'none';
+            }
+        }
+
+        // Init Theme
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        setTheme(savedTheme);
+
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = root.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+
+        // ================= UTILS =================
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
+        }
+
+        function switchView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= QUIZ LOGIC =================
+        function startQuiz() {
+            const rawText = document.getElementById('textInput').value.trim();
+            if (!rawText) return;
+
+            correctAnswers = [];
+            totalGaps = 0;
+            
+            // Regex to split by [word]
+            const parts = rawText.split(/\[(.*?)\]/g);
+            let html = '';
+
+            parts.forEach((part, index) => {
+                if (index % 2 === 0) {
+                    // Normal text: escape and convert newlines to <br>
+                    html += escapeHTML(part).replace(/\n/g, '<br>');
+                } else {
+                    // Gap
+                    const answer = part.trim();
+                    if(answer === '') return; // Ignore empty brackets []
+                    
+                    correctAnswers.push(answer);
+                    // Dynamic width based on word length (min 6ch, max 20ch)
+                    const width = Math.max(6, Math.min(20, answer.length + 2)) + 'ch';
+                    
+                    html += `
+                        <span class="gap-wrapper">
+                            <input type="text" class="gap-input" data-index="${totalGaps}" style="width: ${width}" autocomplete="off">
+                            <span class="hint-icon">?</span>
+                            <span class="tooltip-text">${escapeHTML(answer)}</span>
+                        </span>`;
+                    totalGaps++;
+                }
+            });
+
+            if(totalGaps === 0) {
+                alert("Bitte markiere mindestens ein Wort mit [eckigen Klammern].");
+                return;
+            }
+
+            document.getElementById('clozeContainer').innerHTML = html;
+            
+            // Reset Progress Bar UI
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'inline-flex';
+
+            // Add event listeners to inputs to remove error state when typing
+            document.querySelectorAll('.gap-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('incorrect');
+                });
+                
+                // Press Enter to go to next input or submit
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const inputs = Array.from(document.querySelectorAll('.gap-input'));
+                        const idx = inputs.indexOf(this);
+                        if (idx < inputs.length - 1) {
+                            inputs[idx + 1].focus();
+                        } else {
+                            submitQuiz();
+                        }
+                    }
+                });
+            });
+
+            switchView('quizView');
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.querySelector('.gap-input');
+                if (firstInput) firstInput.focus();
+            }, 400);
+        }
+
+        function goBack() {
+            switchView('setupView');
+            document.getElementById('confetti').style.display = 'none';
+        }
+
+        function submitQuiz() {
+            const inputs = document.querySelectorAll('.gap-input');
+            let correctCount = 0;
+
+            inputs.forEach((input) => {
+                // If already marked correct, skip check
+                if (input.classList.contains('correct')) {
+                    correctCount++;
+                    return;
+                }
+
+                const index = input.getAttribute('data-index');
+                const userVal = input.value.trim().toLowerCase();
+                const correctVal = correctAnswers[index].toLowerCase();
+
+                if (userVal === correctVal) {
+                    input.classList.remove('incorrect');
+                    input.classList.add('correct');
+                    input.setAttribute('disabled', 'true');
+                    correctCount++;
+                } else {
+                    input.classList.add('incorrect');
+                }
+            });
+
+            updateProgress(correctCount, totalGaps);
+        }
+
+        function updateProgress(correctCount, total) {
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const progressText = document.getElementById('progressText');
+            
+            progressContainer.style.display = 'block';
+            
+            const percentage = Math.round((correctCount / total) * 100);
+            progressBar.style.width = percentage + '%';
+            progressPercentage.textContent = percentage + '%';
+
+            // Color logic based on percentage
+            let color = 'var(--danger)'; // < 50%
+            if (percentage >= 80) color = 'var(--success)';
+            else if (percentage >= 50) color = 'var(--warning)';
+
+            progressBar.style.backgroundColor = color;
+
+            if (percentage === 100) {
+                progressText.textContent = "Perfekt! Alles richtig.";
+                progressText.style.color = 'var(--success)';
+                document.getElementById('submitBtn').style.display = 'none';
+                fireConfetti();
+            } else {
+                progressText.textContent = `${correctCount} von ${total} richtig. Verbessere deine Fehler!`;
+                progressText.style.color = 'inherit';
+            }
+        }
+
+        // ================= CONFETTI ENGINE =================
+        function fireConfetti() {
+            const canvas = document.getElementById('confetti');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'];
+
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 5 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: Math.random() * 4 + 3,
+                    rot: Math.random() * 360,
+                    vr: (Math.random() - 0.5) * 10,
+                    opacity: 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05; // gravity
+                    p.rot += p.vr;
+                    if(p.y > canvas.height) p.opacity -= 0.02;
+
+                    if (p.opacity > 0) {
+                        active = true;
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rot * Math.PI) / 180);
+                        ctx.globalAlpha = Math.max(0, p.opacity);
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                        ctx.restore();
+                    }
+                });
+
+                if (active) requestAnimationFrame(animate);
+                else canvas.style.display = 'none';
+            }
+            animate();
+        }
+
+        // Resize Canvas on Window Resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            if (canvas.style.display === 'block') {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>

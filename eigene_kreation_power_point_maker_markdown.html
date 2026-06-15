@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideForge — Professionelle Präsentationen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #5a7d6a;
+            --accent-light: #8fae9b;
+            --accent-glow: rgba(90,125,106,0.25);
+            --bg-dark: #0d1117;
+            --bg-editor: #151b23;
+            --bg-input: #0d1117;
+            --slide-dark-start: #2b3545;
+            --slide-dark-end: #4a5568;
+            --slide-light: #f4f6f5;
+            --text-dark: #1a202c;
+            --text-light: #e2ddd4;
+            --text-muted: #6e7a91;
+            --border: #2a3142;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 { font-family: 'Playfair Display', serif; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+        /* ===== EDITOR ===== */
+        #editor-view {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--bg-editor);
+        }
+
+        .logo-mark {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-weight: 900; font-size: 18px; color: #fff;
+            transition: background 0.3s;
+        }
+
+        .editor-main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .editor-left {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+
+        .editor-tab-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--bg-editor);
+            border-bottom: 1px solid var(--border);
+            gap: 8px;
+        }
+
+        .tab-active {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--accent-glow);
+            color: var(--accent-light);
+            transition: all 0.3s;
+        }
+
+        .tab-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        #markdown-input {
+            flex: 1;
+            background: var(--bg-input);
+            border: none;
+            color: var(--text-light);
+            font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', monospace;
+            font-size: 14px;
+            line-height: 1.75;
+            padding: 24px;
+            resize: none;
+            outline: none;
+            tab-size: 2;
+        }
+        #markdown-input::placeholder { color: var(--text-muted); }
+
+        .editor-right {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-editor);
+            overflow-y: auto;
+        }
+
+        .panel-title {
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Theme List */
+        .theme-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+        
+        .theme-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            background: var(--bg-dark);
+        }
+        .theme-item:hover { border-color: var(--border); }
+        .theme-item.active { border-color: var(--accent-light); background: var(--accent-glow); }
+        
+        .theme-colors { display: flex; gap: 4px; }
+        .theme-dot {
+            width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .theme-name { font-size: 13px; font-weight: 600; color: var(--text-light); }
+
+        /* Upload Zone & Images */
+        .upload-zone {
+            margin: 16px; padding: 24px 20px; border: 2px dashed var(--border); border-radius: 10px;
+            text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: rgba(42,127,127,0.06); }
+        .upload-zone i { font-size: 24px; color: var(--text-muted); margin-bottom: 6px; }
+        .upload-zone p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        .image-list { padding: 8px 16px; flex: 1; }
+        .image-item {
+            display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+            background: var(--bg-dark); border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border);
+        }
+        .image-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
+        .image-item .name { font-size: 12px; color: var(--text-light); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .image-item .remove-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 4px; transition: color 0.2s; }
+        .image-item .remove-btn:hover { color: #e74c3c; }
+
+        .editor-footer {
+            padding: 16px 24px; border-top: 1px solid var(--border); background: var(--bg-editor);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: #fff; border: none; padding: 12px 32px; border-radius: 8px; font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: all 0.25s; font-family: 'Source Sans 3', sans-serif;
+            display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .btn-create:active { transform: translateY(0); }
+
+        .syntax-hint { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+        .syntax-hint code { background: var(--bg-dark); padding: 1px 6px; border-radius: 3px; font-size: 11px; color: var(--accent-light); }
+
+        /* ===== PRÄSENTATION ===== */
+        #presentation-overlay {
+            position: fixed; inset: 0; z-index: 9000; background: #060a10;
+            display: none; flex-direction: column;
+        }
+        #presentation-overlay.active { display: flex; }
+
+        #slide-viewport {
+            flex: 1; position: relative; overflow: hidden; background: #060a10; cursor: pointer;
+        }
+
+        .slide {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            display: none; overflow: hidden;
+        }
+        .slide.active { display: flex; }
+
+        /* ===== Auto-Hide Bottom Bar (ROBUST GELÖST) ===== */
+        .pres-bottom-bar {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(100%); /* Komplett unten versteckt */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none; /* Standardmäßig Klicks durchlassen */
+        }
+        
+        /* Der unsichtbare Auslöser oben auf der Leiste */
+        .pres-bottom-bar::before {
+            content: '';
+            position: absolute;
+            bottom: 100%; /* Setzt den Bereich genau über die Leiste */
+            left: 0; right: 0;
+            height: 80px; /* Großzügiger Hover-Bereich am unteren Bildschirmrand */
+            pointer-events: auto; /* Fängt die Maus ab! */
+        }
+
+        /* Wenn Maus im ::before-Bereich oder auf der Leiste selbst */
+        .pres-bottom-bar:hover {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto; /* Erlaubt Klicks auf die Buttons */
+        }
+
+        .progress-bar { height: 3px; background: rgba(255,255,255,0.1); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-light)); transition: width 0.4s ease; width: 0%; }
+
+        .pres-nav {
+            display: flex; align-items: center; justify-content: space-between; padding: 12px 24px;
+            background: rgba(6, 10, 16, 0.90); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .pres-nav .nav-group { display: flex; align-items: center; gap: 8px; }
+        .nav-btn {
+            background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--text-light);
+            padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px;
+            transition: all 0.2s; font-family: 'Source Sans 3', sans-serif;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nav-btn:hover { border-color: var(--accent); color: var(--accent-light); background: rgba(42,127,127,0.08); }
+        .slide-counter { font-size: 14px; color: var(--text-muted); font-variant-numeric: tabular-nums; min-width: 70px; text-align: center; }
+
+        /* ===== FOLIEN STYLES ===== */
+        .slide-title-cover {
+            background: linear-gradient(160deg, var(--slide-dark-start), var(--slide-dark-end));
+            align-items: center; justify-content: center; text-align: center; padding: 8vh 10vw;
+        }
+        .slide-title-cover .neuron-bg { position: absolute; inset: 0; opacity: 0.08; pointer-events: none; width: 100%; height: 100%; object-fit: cover; }
+        .slide-title-cover .deco-top, .slide-title-cover .deco-bottom { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent-light), transparent); }
+        .slide-title-cover .deco-top { margin-bottom: 28px; }
+        .slide-title-cover .deco-bottom { margin-top: 28px; }
+        .slide-title-cover h1 { font-size: clamp(2.8rem, 7vw, 5rem); font-weight: 900; color: #e8e4dc; letter-spacing: -0.5px; line-height: 1.15; position: relative; z-index: 1; }
+
+        .slide-title-section {
+            background: var(--slide-light); align-items: center; justify-content: center; text-align: center; padding: 8vh 10vw; position: relative;
+        }
+        .slide-title-section .accent-bar { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--accent-light)); }
+        .slide-title-section .deco-top, .slide-title-section .deco-bottom { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); }
+        .slide-title-section .deco-top { margin-bottom: 24px; }
+        .slide-title-section .deco-bottom { margin-top: 24px; }
+        .slide-title-section h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; color: var(--accent); line-height: 1.2; position: relative; z-index: 1; }
+
+        .slide-content {
+            background: var(--slide-light); padding: 6vh 8vw; position: relative; flex-direction: column;
+        }
+        .slide-content .accent-bar { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--accent-light)); }
+        .slide-content h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; color: var(--accent); margin-bottom: 2vh; line-height: 1.2; }
+        .slide-content .divider { width: 80px; height: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 2px; margin-bottom: 4vh; }
+        .slide-content .body {
+            color: var(--text-dark); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.7; flex: 1;
+        }
+        .slide-content .body h2 { font-size: 1.3em; font-weight: 700; color: var(--text-dark); margin-top: 24px; margin-bottom: 12px; }
+        .slide-content .body h3 { font-size: 1.1em; font-weight: 600; color: #3a4a5c; margin-top: 16px; margin-bottom: 8px; }
+        .slide-content .body p { margin-bottom: 16px; }
+        .slide-content .body ul, .slide-content .body ol { padding-left: 28px; margin-bottom: 16px; }
+        .slide-content .body li { margin-bottom: 10px; }
+        .slide-content .body strong { color: var(--accent); font-weight: 700; }
+        .slide-content .body em { font-style: italic; color: #5a6a7c; }
+        .slide-content .body table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85em; }
+        .slide-content .body th { background: var(--accent); color: #fff; font-weight: 600; padding: 12px 20px; text-align: left; }
+        .slide-content .body td { padding: 12px 20px; border-bottom: 1px solid #e0dcd4; }
+        .slide-content .body tr:nth-child(even) td { background: rgba(42,127,127,0.04); }
+
+        .slide-split {
+            background: var(--slide-light); flex-direction: row; position: relative; overflow: hidden;
+        }
+        .slide-split .accent-bar { position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(180deg, var(--accent), var(--accent-light)); z-index: 2; }
+        .slide-split .text-side { flex: 1.15; padding: 6vh 4vw 6vh 7vw; display: flex; flex-direction: column; overflow-y: auto; }
+        .slide-split h1 { font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 700; color: var(--accent); margin-bottom: 1.5vh; line-height: 1.2; }
+        .slide-split .divider { width: 60px; height: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-light)); border-radius: 2px; margin-bottom: 3vh; }
+        .slide-split .body {
+            color: var(--text-dark); font-size: clamp(1.35rem, 2.8vw, 1.9rem); line-height: 1.7; flex: 1;
+        }
+        .slide-split .body h2 { font-size: 1.3em; font-weight: 700; color: var(--text-dark); margin-top: 20px; margin-bottom: 10px; }
+        .slide-split .body h3 { font-size: 1.1em; font-weight: 600; color: #3a4a5c; margin-top: 12px; margin-bottom: 6px; }
+        .slide-split .body p { margin-bottom: 14px; }
+        .slide-split .body ul, .slide-split .body ol { padding-left: 24px; margin-bottom: 14px; }
+        .slide-split .body li { margin-bottom: 8px; }
+        .slide-split .body strong { color: var(--accent); font-weight: 700; }
+        .slide-split .body em { font-style: italic; color: #5a6a7c; }
+        .slide-split .body table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.85em; }
+        .slide-split .body th { background: var(--accent); color: #fff; font-weight: 600; padding: 10px 16px; text-align: left; }
+        .slide-split .body td { padding: 10px 16px; border-bottom: 1px solid #e0dcd4; }
+        .slide-split .body tr:nth-child(even) td { background: rgba(42,127,127,0.04); }
+
+        .slide-split .image-side { flex: 0.85; display: flex; align-items: center; justify-content: center; padding: 5vh 5vw 5vh 2vw; position: relative; }
+        .slide-split .image-side .img-frame { width: 100%; height: 100%; border-radius: 10px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center; background: #eee9e0; }
+        .slide-split .image-side img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #aaa; padding: 30px; text-align: center; }
+        .image-placeholder i { font-size: 42px; color: #c5c0b6; }
+        .image-placeholder span { font-size: 13px; word-break: break-all; }
+
+        /* ===== TOAST & MODAL ===== */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--accent); color: #fff; padding: 12px 28px; border-radius: 8px; font-size: 14px;
+            font-weight: 600; z-index: 10000; transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.35); pointer-events: none;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9500; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: var(--bg-editor); border: 1px solid var(--border); border-radius: 12px; padding: 32px; max-width: 520px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-box h2 { font-size: 1.3rem; color: var(--accent-light); margin-bottom: 16px; }
+        .modal-box table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+        .modal-box td { padding: 6px 10px; font-size: 13px; border-bottom: 1px solid var(--border); color: var(--text-light); }
+        .modal-box td:first-child { font-family: monospace; color: var(--accent-light); white-space: nowrap; }
+        .modal-close { margin-top: 20px; background: var(--accent); color: #fff; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: 'Source Sans 3', sans-serif; }
+
+        @media (max-width: 900px) {
+            .editor-main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+            .editor-right { border-top: 1px solid var(--border); max-height: 300px; }
+            .slide-split { flex-direction: column !important; }
+            .slide-split .image-side { flex: 0 0 40%; padding: 2vh 4vw; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="editor-view">
+    <header class="editor-header">
+        <div class="logo-mark">S</div>
+        <div>
+            <div style="font-family:'Playfair Display',serif; font-weight:700; font-size:18px; letter-spacing:-0.3px;">SlideForge</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:1px;">Professionelle Präsentationen aus Markdown</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px;">
+            <button onclick="showHelp()" class="nav-btn" style="border-color:var(--border);">
+                <i class="fas fa-question-circle"></i> Syntax
+            </button>
+        </div>
+    </header>
+
+    <div class="editor-main">
+        <div class="editor-left">
+            <div class="editor-tab-bar">
+                <span class="tab-active"><i class="fas fa-file-code" style="margin-right:6px;"></i>Markdown</span>
+                <span class="tab-hint"><i class="fas fa-keyboard" style="margin-right:4px;"></i>Strg+Enter = Start</span>
+            </div>
+            <textarea id="markdown-input" spellcheck="false" placeholder="# Titel der Präsentation&#10;&#10;# Erste Folie&#10;Inhalt der ersten Folie...&#10;&#10;# Folie mit Bild&#10;Text links, Bild rechts&#10;[mein-bild.jpg]"></textarea>
+        </div>
+
+        <div class="editor-right">
+            <div class="panel-title"><i class="fas fa-palette" style="margin-right:6px;"></i>Design</div>
+            <div class="theme-list" id="theme-list"></div>
+
+            <div class="panel-title" style="margin-top:10px;"><i class="fas fa-images" style="margin-right:6px;"></i>Bilder</div>
+            <div class="upload-zone" id="upload-zone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Bilder hier ablegen<br>oder klicken zum Auswählen</p>
+                <input type="file" id="file-input" multiple accept="image/*" style="display:none;">
+            </div>
+            <div class="image-list" id="image-list"></div>
+        </div>
+    </div>
+
+    <div class="editor-footer">
+        <div class="syntax-hint">
+            <code>#</code> Neue Folie &nbsp;&middot;&nbsp;
+            <code>[bild.jpg]</code> Bild rechts &nbsp;&middot;&nbsp;
+            <code>**fett**</code> <code>*kursiv*</code> &nbsp;&middot;&nbsp;
+            <code>-</code> Liste
+        </div>
+        <button class="btn-create" onclick="createPresentation()">
+            <i class="fas fa-play"></i> Präsentation starten
+        </button>
+    </div>
+</div>
+
+<div id="presentation-overlay">
+    <div id="slide-viewport">
+        <div class="pres-bottom-bar">
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            <div class="pres-nav">
+                <div class="nav-group">
+                    <button class="nav-btn" onclick="prevSlide()" aria-label="Zurück"><i class="fas fa-chevron-left"></i></button>
+                    <span class="slide-counter" id="slide-counter">1 / 1</span>
+                    <button class="nav-btn" onclick="nextSlide()" aria-label="Weiter"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="nav-group">
+                    <button class="nav-btn" onclick="closePresentation()"><i class="fas fa-times"></i> Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="help-modal">
+    <div class="modal-box">
+        <h2><i class="fas fa-book-open" style="margin-right:8px;"></i>Markdown-Syntax</h2>
+        <table>
+            <tr><td># Titel</td><td>Neue Folie (H1)</td></tr>
+            <tr><td># Titel (allein)</td><td>Zentrierte Abschnitts-Folie</td></tr>
+            <tr><td>## Untertitel</td><td>Unterüberschrift innerhalb einer Folie</td></tr>
+            <tr><td>[bild.jpg]</td><td>Bild rechts, Text links</td></tr>
+            <tr><td>**fett**</td><td>Fetter Text</td></tr>
+            <tr><td>*kursiv*</td><td>Kursiver Text</td></tr>
+            <tr><td>- Eintrag</td><td>Unsortierte Liste</td></tr>
+            <tr><td>1. Eintrag</td><td>Sortierte Liste</td></tr>
+            <tr><td>| A | B |</td><td>Tabelle</td></tr>
+        </table>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:12px;">
+            <strong style="color:var(--accent-light);">Navigation:</strong>
+            Pfeiltasten, Leertaste, Klick = Weiter/Zurück &nbsp;|&nbsp; ESC = Schließen &nbsp;|&nbsp; F11 = Browser-Vollbild
+        </p>
+        <button class="modal-close" onclick="hideHelp()">Verstanden</button>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    let slides = [];
+    let currentSlide = 0;
+    const uploadedImages = {};
+    let neuronPatternUrl = null;
+
+    /* 
+     * VERBESSERTE THEMES 
+     * Orientieren sich an professionellen Design-Standards.
+     */
+    const themes = [
+        {
+            id: 'academic',
+            name: 'Academic (Sage)',
+            colors: { accent: '#5a7d6a', accentLight: '#8fae9b', darkStart: '#2b3545', darkEnd: '#4a5568', slideLight: '#f4f6f5', textDark: '#1a202c' }
+        },
+        {
+            id: 'corporate',
+            name: 'Corporate (Ocean)',
+            colors: { accent: '#0055a4', accentLight: '#00a8e8', darkStart: '#001f3f', darkEnd: '#003366', slideLight: '#ffffff', textDark: '#1d1d1f' }
+        },
+        {
+            id: 'premium',
+            name: 'Premium (Midnight)',
+            colors: { accent: '#d4af37', accentLight: '#f3e5ab', darkStart: '#0f0f0f', darkEnd: '#1a1a1a', slideLight: '#1e1e1e', textDark: '#f0f0f0' }
+        },
+        {
+            id: 'earth',
+            name: 'Earth (Terracotta)',
+            colors: { accent: '#c7633b', accentLight: '#e8a87c', darkStart: '#1d1108', darkEnd: '#3e2723', slideLight: '#fdf6ec', textDark: '#3c2415' }
+        },
+        {
+            id: 'minimal',
+            name: 'Minimal (Mono)',
+            colors: { accent: '#111111', accentLight: '#666666', darkStart: '#111111', darkEnd: '#222222', slideLight: '#ffffff', textDark: '#000000' }
+        }
+    ];
+
+    let currentThemeId = 'academic';
+
+    function initThemes() {
+        const list = document.getElementById('theme-list');
+        list.innerHTML = '';
+        themes.forEach(theme => {
+            const el = document.createElement('div');
+            el.className = 'theme-item' + (theme.id === currentThemeId ? ' active' : '');
+            el.dataset.theme = theme.id;
+            el.onclick = () => applyTheme(theme.id);
+            el.innerHTML = `
+                <div class="theme-colors">
+                    <div class="theme-dot" style="background: ${theme.colors.accent}"></div>
+                    <div class="theme-dot" style="background: ${theme.colors.accentLight}"></div>
+                    <div class="theme-dot" style="background: ${theme.colors.slideLight}"></div>
+                </div>
+                <div class="theme-name">${theme.name}</div>
+            `;
+            list.appendChild(el);
+        });
+    }
+
+    function applyTheme(themeId) {
+        currentThemeId = themeId;
+        const theme = themes.find(t => t.id === themeId);
+        if (!theme) return;
+
+        const root = document.documentElement.style;
+        root.setProperty('--accent', theme.colors.accent);
+        root.setProperty('--accent-light', theme.colors.accentLight);
+        root.setProperty('--accent-glow', theme.colors.accent + '40');
+        root.setProperty('--slide-dark-start', theme.colors.darkStart);
+        root.setProperty('--slide-dark-end', theme.colors.darkEnd);
+        root.setProperty('--slide-light', theme.colors.slideLight);
+        root.setProperty('--text-dark', theme.colors.textDark);
+
+        document.querySelectorAll('.theme-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.theme === themeId);
+        });
+
+        if (document.getElementById('presentation-overlay').classList.contains('active')) {
+            renderSlidesHtml(slides);
+            const allSlides = document.querySelectorAll('#slide-viewport .slide');
+            allSlides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+            updateProgress(); updateCounter();
+        }
+    }
+
+    marked.setOptions({ breaks: true, gfm: true });
+
+    function generateNeuronPattern() {
+        const w = 1600, h = 900;
+        const pts = [];
+        for (let i = 0; i < 65; i++) pts.push({ x: Math.random() * w, y: Math.random() * h });
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`;
+        for (let i = 0; i < pts.length; i++) {
+            for (let j = i + 1; j < pts.length; j++) {
+                const dist = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
+                if (dist < 200) {
+                    const alpha = (1 - dist / 200) * 0.5;
+                    svg += `<line x1="${pts[i].x}" y1="${pts[i].y}" x2="${pts[j].x}" y2="${pts[j].y}" stroke="var(--accent-light)" stroke-opacity="${alpha}" stroke-width="0.8"/>`;
+                }
+            }
+        }
+        for (const p of pts) {
+            const r = 1.5 + Math.random() * 2.5;
+            svg += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="var(--accent-light)" fill-opacity="0.6"/>`;
+        }
+        svg += `</svg>`;
+        return 'data:image/svg+xml,' + encodeURIComponent(svg);
+    }
+
+    function parseMarkdownToSlides(md) {
+        const imageRefRegex = /\[([^\]\[\)]+)\](?!\()/g;
+        const lines = md.split('\n');
+        const rawSlides = [];
+        let current = null;
+
+        for (const line of lines) {
+            const isH1 = /^# (?!#)/.test(line);
+            if (isH1) {
+                if (current) rawSlides.push(current);
+                current = { title: line.replace(/^# /, '').trim(), rawLines: [], images: [] };
+            } else if (current) {
+                let cleaned = line;
+                const refs = line.match(imageRefRegex);
+                if (refs) {
+                    for (const ref of refs) {
+                        const fname = ref.replace(/^\[|\]$/g, '').trim();
+                        if (fname) current.images.push(fname);
+                    }
+                    cleaned = line.replace(imageRefRegex, '').trim();
+                }
+                current.rawLines.push(cleaned);
+            }
+        }
+        if (current) rawSlides.push(current);
+
+        const result = [];
+        for (let i = 0; i < rawSlides.length; i++) {
+            const s = rawSlides[i];
+            const contentMd = s.rawLines.join('\n').trim();
+            const hasContent = contentMd.length > 0;
+            const hasImages = s.images.length > 0;
+            const isFirst = (i === 0);
+
+            let type = 'content';
+            if (!hasContent && !hasImages) {
+                type = isFirst ? 'title-cover' : 'title-section';
+            } else if (hasImages) {
+                type = 'split';
+            }
+
+            result.push({
+                title: s.title, type,
+                htmlContent: hasContent ? marked.parse(contentMd) : '',
+                imageUrls: s.images.map(name => ({ name, url: uploadedImages[name] || null }))
+            });
+        }
+        return result;
+    }
+
+    function renderSlidesHtml(parsedSlides) {
+        const container = document.getElementById('slide-viewport');
+        const bottomBar = container.querySelector('.pres-bottom-bar');
+        container.innerHTML = '';
+        
+        if (!neuronPatternUrl) neuronPatternUrl = generateNeuronPattern();
+
+        parsedSlides.forEach((slide, idx) => {
+            const el = document.createElement('div');
+            el.className = 'slide' + (idx === 0 ? ' active' : '');
+            el.setAttribute('role', 'tabpanel');
+
+            if (slide.type === 'title-cover') {
+                el.classList.add('slide-title-cover');
+                el.innerHTML = `<img class="neuron-bg" src="${neuronPatternUrl}" alt="" aria-hidden="true"><div class="deco-top"></div><h1>${escapeHtml(slide.title)}</h1><div class="deco-bottom"></div>`;
+            } else if (slide.type === 'title-section') {
+                el.classList.add('slide-title-section');
+                el.innerHTML = `<div class="accent-bar"></div><div class="deco-top"></div><h1>${escapeHtml(slide.title)}</h1><div class="deco-bottom"></div>`;
+            } else if (slide.type === 'split') {
+                el.classList.add('slide-split');
+                const imgHtml = slide.imageUrls.map(img => img.url ? `<div class="img-frame"><img src="${img.url}" alt="${escapeHtml(img.name)}"></div>` : `<div class="img-frame"><div class="image-placeholder"><i class="fas fa-image"></i><span>${escapeHtml(img.name)}</span></div></div>`).join('');
+                el.innerHTML = `<div class="accent-bar"></div><div class="text-side"><h1>${escapeHtml(slide.title)}</h1><div class="divider"></div><div class="body">${slide.htmlContent}</div></div><div class="image-side">${imgHtml}</div>`;
+            } else {
+                el.classList.add('slide-content');
+                el.innerHTML = `<div class="accent-bar"></div><h1>${escapeHtml(slide.title)}</h1><div class="divider"></div><div class="body">${slide.htmlContent}</div>`;
+            }
+            container.appendChild(el);
+        });
+        container.appendChild(bottomBar);
+    }
+
+    function escapeHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+    function createPresentation() {
+        const md = document.getElementById('markdown-input').value.trim();
+        if (!md) { showToast('Bitte Markdown-Text eingeben.'); return; }
+        slides = parseMarkdownToSlides(md);
+        if (slides.length === 0) { showToast('Keine Folien gefunden. Nutze # für Folientitel.'); return; }
+
+        currentSlide = 0;
+        renderSlidesHtml(slides);
+        updateProgress(); updateCounter();
+        document.getElementById('presentation-overlay').classList.add('active');
+    }
+
+    function goToSlide(index) {
+        if (index < 0 || index >= slides.length) return;
+        const allSlides = document.querySelectorAll('#slide-viewport .slide');
+        if (!allSlides.length) return;
+        allSlides[currentSlide].classList.remove('active');
+        currentSlide = index;
+        allSlides[currentSlide].classList.add('active');
+        updateProgress(); updateCounter();
+    }
+
+    function nextSlide() { if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 0) goToSlide(currentSlide - 1); }
+    function updateProgress() { document.getElementById('progress-fill').style.width = (slides.length <= 1 ? 100 : ((currentSlide) / (slides.length - 1)) * 100) + '%'; }
+    function updateCounter() { document.getElementById('slide-counter').textContent = (currentSlide + 1) + ' / ' + slides.length; }
+    function closePresentation() { document.getElementById('presentation-overlay').classList.remove('active'); }
+
+    /* Bild-Upload Logik */
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    uploadZone.addEventListener('click', () => fileInput.click());
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('dragover'); });
+    uploadZone.addEventListener('drop', (e) => { e.preventDefault(); uploadZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+    fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
+
+    function handleFiles(files) {
+        for (const file of files) {
+            if (!file.type.startsWith('image/')) continue;
+            const reader = new FileReader();
+            reader.onload = (e) => { uploadedImages[file.name] = e.target.result; renderImageList(); showToast('"' + file.name + '" hinzugefügt'); };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function renderImageList() {
+        const list = document.getElementById('image-list'); list.innerHTML = '';
+        for (const [name, url] of Object.entries(uploadedImages)) {
+            const item = document.createElement('div'); item.className = 'image-item';
+            item.innerHTML = `<img src="${url}" alt="${escapeHtml(name)}"><span class="name">${escapeHtml(name)}</span><button class="remove-btn" onclick="removeImage('${escapeHtml(name).replace(/'/g, "\\'")}')"><i class="fas fa-times"></i></button>`;
+            list.appendChild(item);
+        }
+    }
+    function removeImage(name) { delete uploadedImages[name]; renderImageList(); }
+
+    /* Keyboard, Klick & Toast Logik */
+    document.addEventListener('keydown', (e) => {
+        const overlay = document.getElementById('presentation-overlay');
+        if (!overlay.classList.contains('active')) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); createPresentation(); }
+            if (e.key === 'Escape') hideHelp();
+            return;
+        }
+        switch (e.key) {
+            case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown': case 'Enter': e.preventDefault(); nextSlide(); break;
+            case 'ArrowLeft': case 'ArrowUp': case 'PageUp': e.preventDefault(); prevSlide(); break;
+            case 'Escape': e.preventDefault(); closePresentation(); break;
+            case 'Home': e.preventDefault(); goToSlide(0); break;
+            case 'End': e.preventDefault(); goToSlide(slides.length - 1); break;
+        }
+    });
+
+    document.getElementById('slide-viewport').addEventListener('click', (e) => {
+        if (e.target.closest('.pres-bottom-bar')) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        if (e.clientX - rect.left < rect.width / 3) prevSlide(); else nextSlide();
+    });
+
+    let toastTimeout;
+    function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimeout); toastTimeout = setTimeout(() => t.classList.remove('show'), 2400); }
+    function showHelp() { document.getElementById('help-modal').classList.add('active'); }
+    function hideHelp() { document.getElementById('help-modal').classList.remove('active'); }
+    document.getElementById('help-modal').addEventListener('click', (e) => { if (e.target === e.currentTarget) hideHelp(); });
+
+    /* Init & Demo-Text */
+    initThemes();
+
+    document.getElementById('markdown-input').value = `# Grundlagen der Kognitiven Verhaltenstherapie
+
+# KVT im Überblick
+Die Kognitive Verhaltenstherapie zählt zu den am besten empirisch abgesicherten psychotherapeutischen Verfahren.
+
+- Fokus auf den Zusammenhang zwischen **Kognitionen, Emotionen und Verhalten**
+- Ziel: Identifikation und Modifikation dysfunktionaler Denkmuster
+- Evidenzbasiert, manualisiert und transparent für Patient:innen
+
+# Das Kognitive Modell nach Beck
+Das kognitive Modell beschreibt, wie automatische Gedanken Emotionen und Verhalten beeinflussen.
+
+[brain-activity.png]
+
+## Zentrale Annahmen
+1. Gedanken sind nicht zwingend Fakten
+2. Kognitive Verzerrungen sind erlern- und veränderbar
+3. Schemata steuern die Informationsverarbeitung
+
+# Therapeutischer Prozess
+[therapy-session.jpg]
+
+## Phasen der Behandlung
+1. **Psychoedukation** — Vermittlung des kognitiven Modells
+2. **Kognitive Umstrukturierung** — Modifikation automatischer Gedanken
+3. **Verhaltensexperimente** — Empirische Überprüfung
+4. **Rückfallprävention** — Stabilisierung und Autonomie
+
+# Kognitive Verzerrungen
+Häufige Denkmuster, die zu emotionaler Belastung beitragen:
+
+- **Katastrophisieren** — Die schlimmsten Szenarien werden als sicher angenommen
+- **Schwarz-Weiß-Denken** — Extreme ohne Abstufungen
+- **Personalisierung** — Unangemessene Selbstbeschuldigung
+- **Selektive Abstraktion** — Fokus auf negative Details
+
+# Evidenzlage
+Metaanalysen belegen die Wirksamkeit der KVT:
+
+| Störungsbild | Effektstärke (d) |
+|---|---|
+| Depressive Störungen | 0.67 |
+| Angststörungen | 0.82 |
+| PTBS | 0.71 |
+| Essstörungen | 0.55 |
+
+*Quelle: Hofmann et al., 2012; Cuijpers et al., 2016*
+
+# Zusammenfassung
+
+# Vielen Dank`;
+</script>
+
+</body>
+</html>

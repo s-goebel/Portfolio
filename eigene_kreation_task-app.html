@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Manager — MVP</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f6fa;
+  --card: #ffffff;
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --text-soft: #9ca3af;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: rgba(99, 102, 241, 0.1);
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --success: #10b981;
+  --success-hover: #059669;
+  --warning: #f59e0b;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.12), 0 4px 10px rgba(0,0,0,0.05);
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.1s linear;
+}
+
+body.flash-red    { background: #ef4444 !important; }
+body.flash-yellow { background: #fbbf24 !important; }
+body.flash-white  { background: #ffffff !important; }
+
+#app {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 140px;
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.app-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+.app-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { background: #f9fafb; border-color: var(--border-strong); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--card); border-color: var(--border); }
+
+.btn-primary { background: var(--accent); border-color: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-primary:disabled:hover { background: var(--accent); border-color: var(--accent); }
+
+.btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+.btn-danger:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+
+.btn-success { background: var(--success); border-color: var(--success); color: white; }
+.btn-success:hover { background: var(--success-hover); border-color: var(--success-hover); }
+
+.btn-icon {
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.task-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: auto 1fr 150px auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.task-handle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.task-handle button {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  width: 28px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.task-handle button:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.task-handle button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.field label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.field input {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 9px 11px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: white;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.task-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  height: 38px;
+}
+
+.task-meta-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  min-height: 18px;
+}
+.task-from-library {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.task-dirty {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.summary-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: calc(100% - 32px);
+  max-width: 728px;
+  z-index: 10;
+}
+.summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.summary-info .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.summary-info .value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-muted);
+  background: var(--card);
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+}
+.empty-state .emoji { font-size: 32px; margin-bottom: 8px; }
+.empty-state .hint { font-size: 13px; margin-top: 4px; }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+  animation: fadeIn 0.15s;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.2s;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal h2 {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.modal .modal-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.conflict-task {
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.conflict-task-header {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.conflict-task .preview {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.library-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-bottom: 8px;
+  padding-right: 4px;
+}
+.library-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+  gap: 8px;
+}
+.library-item-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.library-item-title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.library-item-meta { font-size: 12px; color: var(--text-muted); }
+
+.execution-view {
+  text-align: center;
+  padding: 16px 8px 120px;
+}
+.execution-counter {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.execution-task-title {
+  font-size: clamp(20px, 4vw, 30px);
+  font-weight: 700;
+  margin-bottom: 8px;
+  word-break: break-word;
+  padding: 0 8px;
+  line-height: 1.25;
+}
+.execution-task-planned {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.timer-display {
+  font-size: clamp(72px, 22vw, 180px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  line-height: 1;
+  margin: 24px 0;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  user-select: none;
+}
+.timer-display.overdue { color: var(--danger); }
+.timer-progress {
+  width: 100%;
+  max-width: 400px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.timer-progress-bar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s linear, background 0.2s;
+  border-radius: 3px;
+  width: 0%;
+}
+.timer-progress-bar.warning { background: var(--warning); }
+.timer-progress-bar.overdue { background: var(--danger); }
+
+.upcoming-list {
+  margin-top: 48px;
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.upcoming-list h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.upcoming-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.upcoming-item-num {
+  background: var(--bg);
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.upcoming-item-title { font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.upcoming-item-duration { color: var(--text-muted); font-size: 13px; flex-shrink: 0; }
+
+.complete-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  background: var(--card);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.complete-bar .btn { min-width: 140px; padding: 11px 20px; font-size: 15px; }
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.summary-task {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+.summary-task-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.summary-task-num {
+  background: var(--accent-soft);
+  color: var(--accent);
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.summary-task-title {
+  font-size: 17px;
+  font-weight: 600;
+  flex: 1;
+  word-break: break-word;
+}
+.summary-task-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.stat {
+  background: #f9fafb;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+}
+.stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.stat-value {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+.stat-value.faster { color: var(--success); }
+.stat-value.slower { color: var(--danger); }
+.stat-value.neutral { color: var(--text); }
+
+.summary-task-edit {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.summary-task-edit label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.summary-task-edit input {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+}
+.summary-task-edit input[type="text"] { flex: 1; min-width: 120px; }
+.summary-task-edit input[type="number"] { width: 80px; }
+.summary-task-edit input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.summary-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.total-stats {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.total-stat { text-align: center; }
+.total-stat .stat-label { font-size: 10px; }
+.total-stat .stat-value { font-size: 18px; }
+
+#toast-root {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+.toast {
+  background: var(--text);
+  color: white;
+  padding: 11px 18px;
+  border-radius: 9px;
+  font-size: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: toastIn 0.2s, toastOut 0.2s 2.5s forwards;
+  pointer-events: auto;
+}
+.toast.error { background: var(--danger); }
+.toast.success { background: var(--success); }
+@keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastOut { to { transform: translateY(20px); opacity: 0; } }
+
+@media (max-width: 640px) {
+  #app { padding: 16px 12px 140px; }
+  .app-header { flex-direction: column; align-items: stretch; }
+  .header-actions { width: 100%; }
+  .header-actions .btn { flex: 1; }
+  .task-card {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .task-handle { flex-direction: row; justify-content: flex-start; }
+  .task-actions { justify-content: flex-end; height: auto; }
+  .summary-task-stats, .total-stats { grid-template-columns: 1fr; }
+  .complete-bar { width: calc(100% - 24px); bottom: 12px; }
+  .complete-bar .btn { min-width: 0; flex: 1; padding: 11px 12px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   STATE & PERSISTENCE
+   ===================================================================== */
+
+const STORAGE_KEY = "taskManagerMVP_v1";
+
+const defaultState = {
+  view: "planning",
+  planTasks: [],
+  library: [],
+  execution: null,
+};
+
+let state = loadState();
+
+function loadState() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        ...JSON.parse(JSON.stringify(defaultState)),
+        library: Array.isArray(parsed.library) ? parsed.library : [],
+        planTasks: Array.isArray(parsed.planTasks) ? parsed.planTasks : [],
+        view: "planning",
+        execution: null,
+      };
+    }
+  } catch (e) {
+    console.error("Failed to load state:", e);
+  }
+  return JSON.parse(JSON.stringify(defaultState));
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      library: state.library,
+      planTasks: state.planTasks,
+    }));
+  } catch (e) {
+    console.error("Failed to save state:", e);
+  }
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+/* =====================================================================
+   AUDIO
+   ===================================================================== */
+
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.warn("AudioContext not available:", e);
+      return null;
+    }
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(frequency, duration, volume, type) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.frequency.value = frequency;
+  osc.type = type || "sine";
+
+  const startTime = ctx.currentTime;
+  const endTime = startTime + duration;
+  gain.gain.setValueAtTime(0, startTime);
+  gain.gain.linearRampToValueAtTime(volume, startTime + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001, endTime);
+  osc.start(startTime);
+  osc.stop(endTime + 0.02);
+}
+
+function playSoftBeep() {
+  playTone(880, 0.2, 0.18, "sine");
+}
+
+function playLoudBeep() {
+  playTone(440, 0.5, 0.55, "square");
+}
+
+function playWarningAlert() {
+  playSoftBeep();
+  setTimeout(playSoftBeep, 280);
+  setTimeout(playSoftBeep, 560);
+}
+
+function playOverdueAlert() {
+  playLoudBeep();
+  setTimeout(playLoudBeep, 550);
+  setTimeout(playLoudBeep, 1100);
+  setTimeout(playLoudBeep, 1650);
+  setTimeout(playLoudBeep, 2200);
+}
+
+/* =====================================================================
+   FLASHING
+   ===================================================================== */
+
+let flashInterval = null;
+let flashTimeout = null;
+
+function startFlash(duration, onClass) {
+  stopFlash();
+  const colorClass = onClass || "flash-red";
+  document.body.classList.add(colorClass);
+  let isOn = true;
+  flashInterval = setInterval(() => {
+    isOn = !isOn;
+    document.body.classList.toggle(colorClass, isOn);
+    document.body.classList.toggle("flash-white", !isOn);
+  }, 500);
+  if (duration && duration > 0) {
+    flashTimeout = setTimeout(stopFlash, duration);
+  }
+}
+
+function stopFlash() {
+  if (flashInterval) { clearInterval(flashInterval); flashInterval = null; }
+  if (flashTimeout)  { clearTimeout(flashTimeout);  flashTimeout = null;  }
+  document.body.classList.remove("flash-red", "flash-yellow", "flash-white");
+}
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
+
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
+
+function formatTime(totalSeconds) {
+  const sign = totalSeconds < 0 ? "-" : "";
+  const abs = Math.abs(Math.floor(totalSeconds));
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const s = abs % 60;
+  if (h > 0) {
+    return `${sign}${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  }
+  return `${sign}${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function formatMinutes(minutes) {
+  const m = Number(minutes) || 0;
+  if (Math.abs(m - Math.round(m)) < 0.001) return `${m} Min.`;
+  return `${m.toFixed(1).replace(".", ",")} Min.`;
+}
+
+function planTotalMinutes() {
+  return state.planTasks.reduce((s, t) => s + (Number(t.plannedDuration) || 0), 0);
+}
+
+function findLibraryByTitle(title, excludeId) {
+  const norm = String(title).trim().toLowerCase();
+  return state.library.find(t =>
+    t.title.trim().toLowerCase() === norm && t.id !== excludeId
+  );
+}
+
+function showToast(message, kind) {
+  const root = document.getElementById("toast-root");
+  const t = document.createElement("div");
+  t.className = "toast" + (kind ? " " + kind : "");
+  t.textContent = message;
+  root.appendChild(t);
+  setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 2900);
+}
+
+/* =====================================================================
+   MODAL
+   ===================================================================== */
+
+function showModal(contentHtml) {
+  return new Promise((resolve) => {
+    const root = document.getElementById("modal-root");
+    root.innerHTML = "";
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    overlay.appendChild(modal);
+    root.appendChild(overlay);
+    modal.innerHTML = contentHtml;
+
+    let resolved = false;
+    const finish = (result) => {
+      if (resolved) return;
+      resolved = true;
+      document.removeEventListener("keydown", onKey);
+      root.innerHTML = "";
+      resolve(result);
+    };
+
+    function onKey(e) {
+      if (e.key === "Escape") finish({ action: "cancel", modal });
+    }
+    document.addEventListener("keydown", onKey);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) finish({ action: "cancel", modal });
+    });
+
+    modal.querySelectorAll("[data-modal-action]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        finish({
+          action: btn.dataset.modalAction,
+          value: btn.dataset.modalValue,
+          modal,
+        });
+      });
+    });
+  });
+}
+
+/* =====================================================================
+   RENDER ENTRY
+   ===================================================================== */
+
+let timerInterval = null;
+
+function stopTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+function removeCompleteBar() {
+  const bar = document.querySelector(".complete-bar");
+  if (bar) bar.remove();
+}
+
+function render() {
+  stopTimer();
+  removeCompleteBar();
+  stopFlash();
+  if (state.view === "planning") renderPlanning();
+  else if (state.view === "execution") renderExecution();
+  else if (state.view === "summary") renderSummary();
+}
+
+/* =====================================================================
+   PLANNING VIEW
+   ===================================================================== */
+
+function renderPlanning() {
+  const app = document.getElementById("app");
+  const totalMin = planTotalMinutes();
+  const taskCount = state.planTasks.length;
+
+  app.innerHTML = `
+    <div class="app-header">
+      <div>
+        <div class="app-title">Planungsmodus</div>
+        <div class="app-subtitle">${taskCount} Task${taskCount !== 1 ? "s" : ""} · ${formatMinutes(totalMin)} geplant</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="btn-pick-library">📚 Aus Bibliothek</button>
+        <button class="btn btn-primary" id="btn-start" ${taskCount === 0 ? "disabled" : ""}>▶ Start</button>
+      </div>
+    </div>
+
+    <div class="task-list" id="task-list"></div>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+      <button class="btn" id="btn-add-new">+ Neuer Task</button>
+    </div>
+
+    <div class="summary-bar" id="summary-bar">
+      <div class="summary-info">
+        <div class="label">Gesamtzeit</div>
+        <div class="value" id="total-time-value">${formatTime(totalMin * 60)}</div>
+      </div>
+      <button class="btn btn-primary" id="summary-start-btn" ${taskCount === 0 ? "disabled" : ""}>▶ Start</button>
+    </div>
+  `;
+
+  const list = document.getElementById("task-list");
+  if (state.planTasks.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.innerHTML = `
+      <div class="emoji">📋</div>
+      <div><strong>Noch keine Tasks</strong></div>
+      <div class="hint">Klicke unten auf „+ Neuer Task" oder lade welche aus der Bibliothek.</div>
+    `;
+    list.appendChild(empty);
+  } else {
+    state.planTasks.forEach((task, idx) => list.appendChild(createTaskCard(task, idx)));
+  }
+
+  document.getElementById("btn-pick-library").addEventListener("click", openLibraryPicker);
+  document.getElementById("btn-add-new").addEventListener("click", addNewTask);
+  document.getElementById("btn-start").addEventListener("click", startExecution);
+  document.getElementById("summary-start-btn").addEventListener("click", startExecution);
+}
+
+function createTaskCard(task, idx) {
+  const card = document.createElement("div");
+  card.className = "task-card";
+  card.dataset.idx = idx;
+
+  const originalLib = task.fromLibraryId
+    ? state.library.find(t => t.id === task.fromLibraryId)
+    : null;
+  const isDirty = originalLib
+    ? (originalLib.title !== task.title || Number(originalLib.duration) !== Number(task.plannedDuration))
+    : false;
+
+  card.innerHTML = `
+    <div class="task-handle">
+      <button data-action="up" ${idx === 0 ? "disabled" : ""} title="Nach oben" aria-label="Nach oben">▲</button>
+      <button data-action="down" ${idx === state.planTasks.length - 1 ? "disabled" : ""} title="Nach unten" aria-label="Nach unten">▼</button>
+    </div>
+    <div class="field">
+      <label>Titel</label>
+      <input type="text" data-field="title" value="${escapeHtml(task.title)}" placeholder="Was tust du?">
+    </div>
+    <div class="field">
+      <label>Dauer (Min.)</label>
+      <input type="number" data-field="duration" value="${task.plannedDuration}" min="0.5" step="0.5" inputmode="decimal">
+    </div>
+    <div class="task-actions">
+      <button class="btn btn-icon" data-action="save" title="In Bibliothek speichern" aria-label="In Bibliothek speichern">💾</button>
+      <button class="btn btn-icon" data-action="delete" title="Löschen" aria-label="Löschen">🗑️</button>
+    </div>
+    <div class="task-meta-row" data-meta-row>
+      ${task.fromLibraryId ? `<span class="task-from-library">📌 Aus Bibliothek</span>` : ""}
+      ${isDirty ? `<span class="task-dirty">● ungespeicherte Änderungen</span>` : ""}
+    </div>
+  `;
+
+  const titleInput = card.querySelector('[data-field="title"]');
+  const durInput = card.querySelector('[data-field="duration"]');
+
+  titleInput.addEventListener("input", (e) => {
+    task.title = e.target.value;
+    updateTotalTime();
+    updateMetaRow(card, task);
+  });
+  durInput.addEventListener("input", (e) => {
+    const v = parseFloat(e.target.value);
+    task.plannedDuration = isNaN(v) ? 0 : v;
+    updateTotalTime();
+    updateMetaRow(card, task);
+  });
+
+  card.querySelectorAll("[data-action]").forEach(btn => {
+    btn.addEventListener("click", () => handleTaskAction(btn.dataset.action, idx));
+  });
+
+  return card;
+}
+
+function updateTotalTime() {
+  const totalMin = planTotalMinutes();
+  const el = document.getElementById("total-time-value");
+  if (el) el.textContent = formatTime(totalMin * 60);
+  const subtitle = document.querySelector(".app-subtitle");
+  if (subtitle) {
+    const c = state.planTasks.length;
+    subtitle.textContent = `${c} Task${c !== 1 ? "s" : ""} · ${formatMinutes(totalMin)} geplant`;
+  }
+}
+
+function updateMetaRow(card, task) {
+  const originalLib = task.fromLibraryId
+    ? state.library.find(t => t.id === task.fromLibraryId)
+    : null;
+  const isDirty = originalLib
+    ? (originalLib.title !== task.title || Number(originalLib.duration) !== Number(task.plannedDuration))
+    : false;
+  const row = card.querySelector("[data-meta-row]");
+  if (!row) return;
+  row.innerHTML =
+    (task.fromLibraryId ? `<span class="task-from-library">📌 Aus Bibliothek</span>` : "") +
+    (isDirty ? `<span class="task-dirty">● ungespeicherte Änderungen</span>` : "");
+}
+
+function handleTaskAction(action, idx) {
+  if (action === "up" && idx > 0) {
+    [state.planTasks[idx - 1], state.planTasks[idx]] = [state.planTasks[idx], state.planTasks[idx - 1]];
+    render();
+  } else if (action === "down" && idx < state.planTasks.length - 1) {
+    [state.planTasks[idx + 1], state.planTasks[idx]] = [state.planTasks[idx], state.planTasks[idx + 1]];
+    render();
+  } else if (action === "delete") {
+    state.planTasks.splice(idx, 1);
+    saveState();
+    render();
+  } else if (action === "save") {
+    saveTaskToLibrary(idx);
+  }
+}
+
+function addNewTask() {
+  state.planTasks.push({
+    id: uid(),
+    title: "",
+    plannedDuration: 10,
+    fromLibraryId: null,
+  });
+  saveState();
+  render();
+  setTimeout(() => {
+    const cards = document.querySelectorAll(".task-card");
+    const last = cards[cards.length - 1];
+    if (last) {
+      const t = last.querySelector('[data-field="title"]');
+      if (t) t.focus();
+    }
+  }, 0);
+}
+
+function openLibraryPicker() {
+  if (state.library.length === 0) {
+    showToast("Bibliothek ist leer. Speichere erst einen Task.", "error");
+    return;
+  }
+  const content = `
+    <h2>Aus Bibliothek wählen</h2>
+    <div class="modal-subtitle">Wähle einen gespeicherten Task, um ihn in den Plan zu kopieren.</div>
+    <div class="library-list">
+      ${state.library.map(t => `
+        <div class="library-item">
+          <div class="library-item-info">
+            <div class="library-item-title">${escapeHtml(t.title)}</div>
+            <div class="library-item-meta">${formatMinutes(t.duration)}</div>
+          </div>
+          <button class="btn btn-primary btn-sm" data-modal-action="pick" data-modal-value="${t.id}">+ Hinzufügen</button>
+        </div>
+      `).join("")}
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-modal-action="cancel">Schließen</button>
+    </div>
+  `;
+  showModal(content).then(result => {
+    if (result.action === "pick") {
+      const lib = state.library.find(t => t.id === result.value);
+      if (lib) {
+        state.planTasks.push({
+          id: uid(),
+          title: lib.title,
+          plannedDuration: lib.duration,
+          fromLibraryId: lib.id,
+        });
+        saveState();
+        render();
+      }
+    }
+  });
+}
+
+async function saveTaskToLibrary(idx) {
+  const task = state.planTasks[idx];
+  if (!task.title.trim()) {
+    showToast("Bitte erst einen Titel eingeben.", "error");
+    return;
+  }
+  if (!task.plannedDuration || task.plannedDuration <= 0) {
+    showToast("Bitte eine Dauer > 0 eingeben.", "error");
+    return;
+  }
+
+  const original = task.fromLibraryId
+    ? state.library.find(t => t.id === task.fromLibraryId)
+    : null;
+
+  // Case A: Modified library task — ask overwrite / new
+  if (original && (original.title !== task.title.trim() || Number(original.duration) !== Number(task.plannedDuration))) {
+    const result = await showModal(`
+      <h2>Geänderten Task speichern</h2>
+      <div class="modal-subtitle">Du hast einen Task aus der Bibliothek verändert. Möchtest du das Original überschreiben oder als neuen Task speichern?</div>
+      <div class="conflict-task">
+        <div class="conflict-task-header">Original in Bibliothek</div>
+        <div class="preview">„${escapeHtml(original.title)}" · ${formatMinutes(original.duration)}</div>
+      </div>
+      <div class="conflict-task">
+        <div class="conflict-task-header">Aktuelle Änderung</div>
+        <div class="preview">„${escapeHtml(task.title)}" · ${formatMinutes(task.plannedDuration)}</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" data-modal-action="cancel">Abbrechen</button>
+        <button class="btn btn-primary" data-modal-action="new">Als neuen Task speichern</button>
+        <button class="btn btn-success" data-modal-action="overwrite">Original überschreiben</button>
+      </div>
+    `);
+    if (result.action === "cancel") return;
+
+    if (result.action === "overwrite") {
+      // Check if new title conflicts with another library entry
+      const otherConflict = findLibraryByTitle(task.title, original.id);
+      if (otherConflict) {
+        const resolved = await resolveConflict(task, otherConflict, original);
+        if (!resolved) return;
+      } else {
+        original.title = task.title.trim();
+        original.duration = task.plannedDuration;
+        saveState();
+        showToast("Bibliothek aktualisiert.", "success");
+      }
+      render();
+      return;
+    }
+
+    if (result.action === "new") {
+      // Treat as adding a new library entry. The original stays.
+      task.fromLibraryId = null;
+      // fall through to conflict / save logic
+    }
+  } else if (original) {
+    showToast("Task ist bereits unverändert in der Bibliothek.");
+    return;
+  }
+
+  // Case B: Check for title conflict with another library entry
+  const conflict = findLibraryByTitle(task.title, task.fromLibraryId || null);
+  if (conflict) {
+    const resolved = await resolveConflict(task, conflict, null);
+    if (!resolved) return;
+    render();
+    return;
+  }
+
+  // Case C: No conflict, just save
+  const newEntry = {
+    id: uid(),
+    title: task.title.trim(),
+    duration: task.plannedDuration,
+  };
+  state.library.push(newEntry);
+  task.fromLibraryId = newEntry.id;
+  saveState();
+  showToast("Task in Bibliothek gespeichert.", "success");
+  render();
+}
+
+async function resolveConflict(task, conflict, originalBeingOverwritten) {
+  // For "overwrite" path we also allow editing the conflict's title so the
+  // user has a way to resolve it.
+  // We force at least one of the titles to change so they don't collide.
+  const result = await showModal(`
+    <h2>Titel-Konflikt</h2>
+    <div class="modal-subtitle">Es gibt bereits einen Task mit dem Titel „${escapeHtml(conflict.title)}" in der Bibliothek. Bitte ändere mindestens einen der Titel.</div>
+
+    <div class="conflict-task">
+      <div class="conflict-task-header">Bestehender Task in der Bibliothek</div>
+      <div class="field">
+        <label>Titel</label>
+        <input type="text" id="cf-existing-title" value="${escapeHtml(conflict.title)}">
+      </div>
+      <div class="field" style="margin-top: 8px;">
+        <label>Dauer (Min.)</label>
+        <input type="number" id="cf-existing-duration" value="${conflict.duration}" min="0.5" step="0.5">
+      </div>
+    </div>
+
+    <div class="conflict-task">
+      <div class="conflict-task-header">${originalBeingOverwritten ? "Überschreibt als:" : "Wird neu gespeichert als:"}</div>
+      <div class="field">
+        <label>Titel</label>
+        <input type="text" id="cf-new-title" value="${escapeHtml(task.title)}">
+      </div>
+      <div class="field" style="margin-top: 8px;">
+        <label>Dauer (Min.)</label>
+        <input type="number" id="cf-new-duration" value="${task.plannedDuration}" min="0.5" step="0.5">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" data-modal-action="cancel">Abbrechen</button>
+      <button class="btn btn-primary" data-modal-action="resolve">Speichern</button>
+    </div>
+  `);
+
+  if (result.action === "cancel") return false;
+  const modal = result.modal;
+  const newExistingTitle = modal.querySelector("#cf-existing-title").value.trim();
+  const newExistingDuration = parseFloat(modal.querySelector("#cf-existing-duration").value);
+  const newNewTitle = modal.querySelector("#cf-new-title").value.trim();
+  const newNewDuration = parseFloat(modal.querySelector("#cf-new-duration").value);
+
+  if (!newExistingTitle || !newNewTitle) {
+    showToast("Titel dürfen nicht leer sein.", "error");
+    return false;
+  }
+  if (!(newExistingDuration > 0) || !(newNewDuration > 0)) {
+    showToast("Dauer muss größer als 0 sein.", "error");
+    return false;
+  }
+  if (newExistingTitle.toLowerCase() === newNewTitle.toLowerCase()) {
+    showToast("Titel müssen unterschiedlich sein.", "error");
+    return false;
+  }
+  // Make sure neither title collides with another library entry
+  const otherExisting = state.library.find(t => t.id !== conflict.id && t.title.trim().toLowerCase() === newExistingTitle.toLowerCase());
+  if (otherExisting) {
+    showToast("Dieser Titel existiert bereits in der Bibliothek.", "error");
+    return false;
+  }
+  const otherNew = state.library.find(t => t.id !== conflict.id && t.title.trim().toLowerCase() === newNewTitle.toLowerCase());
+  if (otherNew) {
+    showToast("Dieser Titel existiert bereits in der Bibliothek.", "error");
+    return false;
+  }
+
+  // Apply
+  conflict.title = newExistingTitle;
+  conflict.duration = newExistingDuration;
+  task.title = newNewTitle;
+  task.plannedDuration = newNewDuration;
+
+  if (originalBeingOverwritten) {
+    // We're overwriting `originalBeingOverwritten` with the new title/duration.
+    originalBeingOverwritten.title = newNewTitle;
+    originalBeingOverwritten.duration = newNewDuration;
+    showToast("Bibliothek aktualisiert.", "success");
+  } else {
+    // New library entry
+    const newEntry = {
+      id: uid(),
+      title: newNewTitle,
+      duration: newNewDuration,
+    };
+    state.library.push(newEntry);
+    task.fromLibraryId = newEntry.id;
+    showToast("Task gespeichert.", "success");
+  }
+  saveState();
+  return true;
+}
+
+/* =====================================================================
+   EXECUTION
+   ===================================================================== */
+
+function startExecution() {
+  if (state.planTasks.length === 0) return;
+  state.view = "execution";
+  state.execution = {
+    currentTaskIndex: 0,
+    taskResults: state.planTasks.map(t => ({
+      title: t.title,
+      plannedDuration: Number(t.plannedDuration) || 0,
+      actualDuration: null,
+      completed: false,
+    })),
+    timerStart: Date.now(),
+    pausedElapsed: 0,
+    warningPlayed: false,
+    overduePlayed: false,
+  };
+  render();
+}
+
+function startTimerLoop() {
+  stopTimer();
+  // Render initial state immediately
+  updateTimerUI();
+  timerInterval = setInterval(updateTimerUI, 250);
+}
+
+function updateTimerUI() {
+  if (!state.execution) return;
+  const exec = state.execution;
+  const task = exec.taskResults[exec.currentTaskIndex];
+  if (!task) return;
+
+  const now = Date.now();
+  const elapsedMs = exec.pausedElapsed + (now - exec.timerStart);
+  const elapsedSec = Math.floor(elapsedMs / 1000);
+  const plannedSec = task.plannedDuration * 60;
+  const remaining = plannedSec - elapsedSec;
+
+  const timerEl = document.getElementById("timer-display");
+  if (timerEl) {
+    timerEl.textContent = formatTime(remaining);
+    if (remaining < 0) timerEl.classList.add("overdue");
+    else timerEl.classList.remove("overdue");
+  }
+  const bar = document.getElementById("timer-progress-bar");
+  if (bar) {
+    const pct = Math.min(100, (elapsedSec / plannedSec) * 100);
+    bar.style.width = pct + "%";
+    bar.classList.remove("warning", "overdue");
+    if (remaining < 0) bar.classList.add("overdue");
+    else if (pct >= 80) bar.classList.add("warning");
+  }
+
+  // 80% warning
+  if (!exec.warningPlayed && elapsedSec >= plannedSec * 0.8) {
+    exec.warningPlayed = true;
+    playWarningAlert();
+    startFlash(10000, "flash-yellow"); // yellow flash for 10 seconds
+  }
+
+  // Overdue
+  if (!exec.overduePlayed && remaining < 0) {
+    exec.overduePlayed = true;
+    playOverdueAlert();
+    startFlash(0, "flash-red"); // red flash continuously
+  }
+}
+
+function renderExecution() {
+  const app = document.getElementById("app");
+  const exec = state.execution;
+  const idx = exec.currentTaskIndex;
+  const task = exec.taskResults[idx];
+  const total = exec.taskResults.length;
+  const upcoming = exec.taskResults.slice(idx + 1);
+
+  app.innerHTML = `
+    <div class="execution-view">
+      <div class="execution-counter">Task ${idx + 1} von ${total}</div>
+      <div class="execution-task-title">${escapeHtml(task.title || "(Kein Titel)")}</div>
+      <div class="execution-task-planned">Geplant: ${formatMinutes(task.plannedDuration)}</div>
+      <div class="timer-display" id="timer-display">--:--</div>
+      <div class="timer-progress"><div class="timer-progress-bar" id="timer-progress-bar"></div></div>
+
+      <div class="upcoming-list">
+        <h3>${upcoming.length > 0 ? "Nächste Tasks" : "Letzter Task — du hast es gleich geschafft!"}</h3>
+        ${upcoming.map((t, i) => `
+          <div class="upcoming-item">
+            <div class="upcoming-item-num">${i + 1}</div>
+            <div class="upcoming-item-title">${escapeHtml(t.title || "(Kein Titel)")}</div>
+            <div class="upcoming-item-duration">${formatMinutes(t.plannedDuration)}</div>
+          </div>
+        `).join("")}
+        ${upcoming.length === 0 ? '<div class="empty-state" style="margin-top: 16px; padding: 20px;"><div class="emoji">🎯</div><div>Wenn der Timer abläuft, klicke unten auf „Task abschließen".</div></div>' : ""}
+      </div>
+    </div>
+  `;
+
+  // Floating complete bar
+  const bar = document.createElement("div");
+  bar.className = "complete-bar";
+  bar.innerHTML = `
+    <button class="btn btn-success" id="btn-complete">✓ Task abschließen</button>
+    <button class="btn" id="btn-cancel-execution" title="Ausführung abbrechen">✕ Abbrechen</button>
+  `;
+  document.body.appendChild(bar);
+  document.getElementById("btn-complete").addEventListener("click", completeTask);
+  document.getElementById("btn-cancel-execution").addEventListener("click", cancelExecution);
+
+  startTimerLoop();
+}
+
+function completeTask() {
+  if (!state.execution) return;
+  const exec = state.execution;
+  const now = Date.now();
+  const elapsedMs = exec.pausedElapsed + (now - exec.timerStart);
+  const actualSec = Math.floor(elapsedMs / 1000);
+  const task = exec.taskResults[exec.currentTaskIndex];
+  task.actualDuration = actualSec;
+  task.completed = true;
+
+  stopFlash();
+  stopTimer();
+
+  if (exec.currentTaskIndex >= exec.taskResults.length - 1) {
+    state.view = "summary";
+    render();
+  } else {
+    exec.currentTaskIndex++;
+    exec.timerStart = Date.now();
+    exec.pausedElapsed = 0;
+    exec.warningPlayed = false;
+    exec.overduePlayed = false;
+    render();
+  }
+}
+
+function cancelExecution() {
+  if (!confirm("Ausführung wirklich abbrechen? Der Fortschritt geht verloren.")) return;
+  stopFlash();
+  stopTimer();
+  state.view = "planning";
+  state.execution = null;
+  render();
+}
+
+/* =====================================================================
+   SUMMARY VIEW
+   ===================================================================== */
+
+function renderSummary() {
+  const app = document.getElementById("app");
+  const results = state.execution.taskResults;
+
+  // Totals
+  let totalPlanned = 0, totalActual = 0;
+  results.forEach(t => {
+    totalPlanned += (Number(t.plannedDuration) || 0) * 60;
+    totalActual += Number(t.actualDuration) || 0;
+  });
+  const totalDiffPct = totalPlanned > 0 ? ((totalActual - totalPlanned) / totalPlanned) * 100 : 0;
+  const totalClass = Math.abs(totalDiffPct) < 0.5 ? "neutral" : (totalDiffPct < 0 ? "faster" : "slower");
+
+  app.innerHTML = `
+    <div class="app-header">
+      <div>
+        <div class="app-title">Zusammenfassung</div>
+        <div class="app-subtitle">${results.length} Task${results.length !== 1 ? "s" : ""} abgeschlossen</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="btn-back-planning">← Zurück zum Plan</button>
+        <button class="btn btn-primary" id="btn-new-session">+ Neue Session</button>
+      </div>
+    </div>
+
+    <div class="total-stats">
+      <div class="total-stat">
+        <div class="stat-label">Geplant gesamt</div>
+        <div class="stat-value">${formatTime(totalPlanned)}</div>
+      </div>
+      <div class="total-stat">
+        <div class="stat-label">Tatsächlich</div>
+        <div class="stat-value">${formatTime(totalActual)}</div>
+      </div>
+      <div class="total-stat">
+        <div class="stat-label">Differenz</div>
+        <div class="stat-value ${totalClass}">${totalClass === "neutral" ? "±" : (totalDiffPct < 0 ? "↓" : "↑")} ${Math.abs(totalDiffPct).toFixed(0)}%</div>
+      </div>
+    </div>
+
+    <div class="summary-list" id="summary-list"></div>
+  `;
+
+  const list = document.getElementById("summary-list");
+  results.forEach((task, idx) => {
+    const plannedSec = (Number(task.plannedDuration) || 0) * 60;
+    const actualSec = Number(task.actualDuration) || 0;
+    const actualMin = Math.round((actualSec / 60) * 10) / 10; // 1 decimal
+    const diffPct = plannedSec > 0 ? ((actualSec - plannedSec) / plannedSec) * 100 : 0;
+    const diffClass = Math.abs(diffPct) < 0.5 ? "neutral" : (diffPct < 0 ? "faster" : "slower");
+
+    const el = document.createElement("div");
+    el.className = "summary-task";
+    el.innerHTML = `
+      <div class="summary-task-header">
+        <div class="summary-task-num">${idx + 1}</div>
+        <div class="summary-task-title">${escapeHtml(task.title || "(Kein Titel)")}</div>
+      </div>
+      <div class="summary-task-stats">
+        <div class="stat">
+          <div class="stat-label">Geplant</div>
+          <div class="stat-value">${formatTime(plannedSec)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Tatsächlich</div>
+          <div class="stat-value">${formatTime(actualSec)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Differenz</div>
+          <div class="stat-value ${diffClass}">${diffClass === "neutral" ? "±" : (diffPct < 0 ? "↓" : "↑")} ${Math.abs(diffPct).toFixed(0)}%</div>
+        </div>
+      </div>
+      <div class="summary-task-edit">
+        <label>Vorlage:</label>
+        <input type="text" data-edit="title" value="${escapeHtml(task.title)}" placeholder="Titel">
+        <label>Dauer (Min.):</label>
+        <input type="number" data-edit="duration" value="${actualMin}" min="0.5" step="0.5" inputmode="decimal" title="Vorausgefüllt mit deiner tatsächlichen Zeit — du kannst sie noch anpassen.">
+        <span style="font-size: 11px; color: var(--text-soft); flex-basis: 100%;">↳ Vorausgefüllt mit deiner tatsächlichen Zeit (${formatTime(actualSec)}). Du kannst sie noch anpassen.</span>
+        <button class="btn btn-primary btn-sm" data-save-template="${idx}">💾 Als Vorlage speichern</button>
+      </div>
+    `;
+    el.querySelector(`[data-save-template="${idx}"]`).addEventListener("click", () => {
+      saveSummaryTemplate(idx, el);
+    });
+    list.appendChild(el);
+  });
+
+  document.getElementById("btn-back-planning").addEventListener("click", () => {
+    state.view = "planning";
+    render();
+  });
+  document.getElementById("btn-new-session").addEventListener("click", () => {
+    state.execution = null;
+    state.view = "planning";
+    state.planTasks = [];
+    saveState();
+    render();
+  });
+}
+
+async function saveSummaryTemplate(idx, el) {
+  const titleInput = el.querySelector('[data-edit="title"]');
+  const durationInput = el.querySelector('[data-edit="duration"]');
+  const newTitle = titleInput.value.trim();
+  const newDuration = parseFloat(durationInput.value);
+
+  if (!newTitle) { showToast("Titel darf nicht leer sein.", "error"); return; }
+  if (!(newDuration > 0)) { showToast("Dauer muss größer als 0 sein.", "error"); return; }
+
+  const conflict = findLibraryByTitle(newTitle, null);
+  if (conflict) {
+    const result = await showModal(`
+      <h2>Titel existiert bereits</h2>
+      <div class="modal-subtitle">In der Bibliothek gibt es bereits einen Task mit dem Titel „${escapeHtml(conflict.title)}".</div>
+      <div class="conflict-task">
+        <div class="conflict-task-header">Bestehende Vorlage</div>
+        <div class="preview">„${escapeHtml(conflict.title)}" · ${formatMinutes(conflict.duration)}</div>
+      </div>
+      <div class="conflict-task">
+        <div class="conflict-task-header">Neue Vorlage</div>
+        <div class="preview">„${escapeHtml(newTitle)}" · ${formatMinutes(newDuration)}</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" data-modal-action="cancel">Abbrechen</button>
+        <button class="btn btn-primary" data-modal-action="new">Trotzdem als neue Vorlage anlegen</button>
+        <button class="btn btn-success" data-modal-action="overwrite">Bestehende überschreiben</button>
+      </div>
+    `);
+    if (result.action === "cancel") return;
+    if (result.action === "overwrite") {
+      conflict.title = newTitle;
+      conflict.duration = newDuration;
+      saveState();
+      showToast("Vorlage aktualisiert.", "success");
+      return;
+    }
+    // else fall through and create new
+  }
+
+  // Check no other entry has this title
+  const dup = findLibraryByTitle(newTitle, conflict ? conflict.id : null);
+  if (dup) {
+    showToast("Dieser Titel existiert bereits.", "error");
+    return;
+  }
+
+  state.library.push({
+    id: uid(),
+    title: newTitle,
+    duration: newDuration,
+  });
+  saveState();
+  showToast("Vorlage gespeichert.", "success");
+}
+
+/* =====================================================================
+   INIT
+   ===================================================================== */
+
+render();
+</script>
+</body>
+</html>

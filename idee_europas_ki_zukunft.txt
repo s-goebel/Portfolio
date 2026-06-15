@@ -1,0 +1,23 @@
+Das Grundprinzip ist einfach:
+Die EU bezahlt 75 % der API-Kosten für KI-Output von Large Language Models, maximal jedoch 2 € pro 1 Mio Output-Tokens, wenn
+1. der Zugriff innerhalb von der EU, von EU-Bürgern / -Unternehmen erfolgt
+2. das Hosting der KI innerhalb der EU und durch ein in der EU ansässiges Unternehmen erfolgt
+3. die Datenschutzbestimmungen der EU eingehalten - und die Daten nach 30 Tagen gelöscht werden
+4. das LLM, auf welches zugegriffen wird ein Open Weights Model ist (auf das jeder freien Zugriff hat)
+
+Warum?
+- Datenhoheit der EU, Datensicherheit und -schutz für private Daten von EU-Bürgern und -Unternehmen
+- indirekte Subventionierung des Ausbaus von Leistungsstarker Serverinfrastruktur in Europa
+- Neugründung von Unternehmen in der EU => Arbeitsplätze, Steuereinnahmen
+- Förderung von Open Weights Modellen
+- Modelle, die in USA oder China trainiert wurden und dann freigegeben wurden nutzen, ohne selbst die Trainingskosten zu tragen
+- B2B fördern: EU-Unternehmen können Apps mit Abo-Modellen günstiger anbieten => Preise für Endkonsumenten sinken
+- Europa sichert sich eine Vormachtstellung bei kleinen und mittelstarken Modellen, ohne Milliarden an Risikokapital investieren zu müssen
+- indem API-Kosten subventioniert werden (Nachfrageorientierte Wirtschaftspolitik), bezahlt die EU nicht für fehlgeschlagene Experimente von Unternehmen
+- durch die Deckelung der Subventionierung auf maximal 2 € pro Output-Token werden vor allem effiziente Modelle gefördert, was gut für den Massenmarkt und den Klimaschutz ist
+- die Kosten für die EU sind Erfolgs-abhängig und günstig: wenn in der EU 1.500 Billionen Output-Tokens auf diesem Wege generiert werden würden und alle mit dem maximalen bezahlten Anteil (2 € pro 1 Mio Tokens) bezahlt werden müssten, wären das nur 3 Mrd € an Kosten (1.500.000.000 Mio Outputtokens  x 2 € pro Mio Outputtokens)
+
+Grenzen:
+- EU-Unternehmen wie Mistral profitieren wenn dann nur sehr indirekt, man fördert vor allem Modelle, die in USA / China trainiert wurden. Es kann diskutiert werden, ob wir das wollen. Allerdings nutzen wir damit letztendlich das KI-Wettrennen der Weltmächte für unseren Vorteil. Man könnte ebenfalls EU-Modelle noch stärker subventionieren
+- Administrativer Aufwand: Es sollte verhindert werden, dass Nicht-EU-Unternehmen und -Bürger die Subventionen im großen Stil ausnutzen; aufgrund der vorraussichtlich geringen Kosten könnte man dies theoretisch aber auch billigend in Kauf nehmen (selbst wenn somit 1.000 Bio Output-Tokens 'geschmuggelt' werden, entstünden nur zusätzliche Kosten von 2 Mrd €, was ein winziger Bruchteil anderer EU-Subventionen ist)
+- Die Nutzung sehr teurer (meist leistungsstärkerer) Modelle wird deutlich weniger subventioniert. Dies ist jedoch auch Sinn der Sache, da somit effiziente Modelle (die für alltägliche Nutzung meist ausreichen) häufiger genutzt werden, als sehr teure. Es könnte jedoch zu einem Effekt kommen, bei dem versucht wird, durch sehr viele Iterationen in der Nutzung mit schwachen Modellen starke Ergebnisse zu erzielen, was zu mehr Stromverbrauch führen könnte.

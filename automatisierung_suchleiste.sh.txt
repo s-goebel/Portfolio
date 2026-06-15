@@ -1,0 +1,223 @@
+#!/bin/bash
+
+# Basis-Pfad definieren (s statt sunny)
+HOME_DIR="/home/s"
+
+# Platzhalter durch Zwischenablage ersetzen
+replaceWithClipboardContent() {
+	local clip_txt=$(xclip -selection clipboard -o)
+	local s=$1
+	s=${s//ZZZ/$clip_txt}
+	s=${s//zzz/$clip_txt}
+	echo "$s"
+}
+
+# Standard-Browser
+browser="firefox"
+
+# Rofi-Menü anzeigen
+sq=$(rofi -dmenu -normal-window -p "🔎" \
+	-theme-str 'window { width: 900; height: 34; background-color: #FFFFFF; } listview { lines: 0; } element { background-color: #FFFFFF; color: #FFFFFF; font: "Noto Sans Mono 30"; } element selected { background-color: #FFFFFF; color: #FFFFFF; border: 2px solid #000000; } inputbar { children: [prompt, textbox]; } prompt { enabled: true; text-color: #FFFFFF; font: "Noto Sans Mono 30"; }')
+
+# Zwischenablage verarbeiten
+search_query=$(replaceWithClipboardContent "$sq")
+
+# Abbruch bei leerer Eingabe
+if [[ -z $search_query ]]; then
+	exit 0
+fi
+
+# Befehle auswerten
+case $search_query in
+
+	# Leerer Browser-Aufruf
+	v\ *)
+		$browser ""
+		;;
+
+	# Timer starten
+	timer\ *)
+		timer "${search_query:2}"
+		;;
+
+	# Flaticon Suche
+	vec\ *)
+		$browser "https://www.flaticon.com/search?word=${search_query:4}"
+		;;
+
+	# Google Definition
+	d\ *)
+		$browser "https://www.google.com/search?q=Definition+von+${search_query:2}"
+		;;
+
+	# Google Scholar
+	paper\ *)
+		$browser "https://scholar.google.com/scholar?q=${search_query:6}"
+		;;
+
+	# Reim-Suche
+	r\ *)
+		$browser "https://www.google.com/search?q=Reim+auf+${search_query:2}"
+		;;
+
+	# Ecosia Bildersuche
+	b\ *)
+		$browser "https://www.ecosia.org/images?q=${search_query:2}"
+		;;
+
+	# Ecosia News
+	n\ *)
+		$browser "https://www.ecosia.org/news?q=${search_query:2}"
+		;;
+
+	# Google Maps
+	m\ *)
+		$browser "https://www.google.com/maps/search/${search_query:2}"
+		;;
+
+	# DeepL Englisch -> Deutsch
+	de\ *)
+		$browser "https://www.deepl.com/translator#en/de/${search_query:3}"
+		;;
+
+	# DeepL Deutsch -> Englisch
+	en\ *)
+		$browser "https://www.deepl.com/translator#de/en/${search_query:3}"
+		;;
+
+	# Taschenrechner-Skript
+	t\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/simpler_taschenrechner.py "${search_query:2}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Faktentreuer Humanist (DeepSeek)
+	c\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/openrouter.py deepseek/deepseek-v4-flash none "Du bist ein hilfreicher Assistent im Alltag eines faktentreuen Humanisten." "${search_query:2}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Kurze, präzise Antworten (Granite)
+	c0\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/openrouter.py ibm-granite/granite-4.1-8b none "Du bekommst immer einfache Aufgaben und musst die schnell und gewissenhaft lösen. Schreibe nie mehr als nötig, um die Aufgabe perfekt zu lösen aber auch nie weniger als nötig!" "${search_query:3}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Sympathischer Assistent (Mistral)
+	c1\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/openrouter.py mistralai/mistral-small-2603 none "Du bist ein nützlicher, schneller Assistent. Sei faktentreu und sympathisch." "${search_query:3}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Senior-Informatiker (DeepSeek)
+	c2\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/openrouter.py deepseek/deepseek-v4-flash medium "Du bist ein Senior-Informatiker. Gewissenhaftigkeit, Präzision, Dienlichkeit und Effizienz sind die Eigenschaften, die dich auszeichnen." "${search_query:3}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Senior-Informatiker Perfektionist (Xiaomi)
+	c3\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/openrouter.py xiaomi/mimo-v2.5-pro xhigh "Du bist ein Senior-Informatiker. Gewissenhaftigkeit, Präzision, Dienlichkeit und Effizienz sind die Eigenschaften, die dich auszeichnen. Du befolgst Instruktionen sehr genau." "${search_query:3}" > "$tmp"; mousepad "$tmp"; rm "$tmp") &
+		;;
+
+	# KI: Text-to-Speech (Gemini)
+	tts\ *)
+		(tmp=$(mktemp); python3 $HOME_DIR/Dokumente/SelfmadeTools/ToolsForAI/tts_gemini.py "${search_query:3}")
+		;;
+
+	# i3 Konfiguration bearbeiten
+	config)
+		mousepad $HOME_DIR/Dokumente/SelfmadeTools/sb $HOME_DIR/.config/i3/config &
+		;;
+
+	# Git Backup ausführen
+	backup)
+		. $HOME_DIR/Dokumente/SelfmadeTools/git_backup.sh	
+		;;
+
+	# Tools-Ordner öffnen
+	tools)
+		pcmanfm $HOME_DIR/Dokumente/SelfmadeTools
+		;;
+
+	# Espanso neu starten
+	restart)
+		sudo systemctl restart espanso
+		;;
+
+	# Studium-Ordner öffnen
+	study)
+		pcmanfm $HOME_DIR/Dokumente/Studium
+		;;
+
+	# Persönliche Infos kopieren
+	ich)
+		$HOME_DIR/Dokumente/SelfmadeTools/rofi_kopierer.sh $HOME_DIR/Dokumente/SelfmadeTools/ich_standard_infos.txt
+		;;
+
+	# Android Studio starten
+	android)
+		bash /opt/android-studio/bin/studio.sh
+		;;
+
+	# Spiel Mindustry starten
+	mindustry)
+		/snap/bin/mindustry
+		;;
+
+	# WhatsApp Web
+	wa)
+		$browser "https://web.whatsapp.com/" &
+		;;
+
+	# Uni: Zeus
+	z)
+		$browser "https://zeus.uni-konstanz.de/"
+		;;
+
+	# Uni: Ilias
+	i)
+		$browser "https://ilias.uni-konstanz.de"
+		;;
+
+	# Uni: Sogo (Mail)
+	sogo)
+		$browser "https://sogo.uni-konstanz.de/"
+		;;
+
+	# Uni: Sona
+	sona)
+		$browser "https://idp.uni-konstanz.de/idp/profile/SAML2/Redirect/SSO?execution=e1s2"
+		;;
+
+	# Google Kalender
+	cal)
+		$browser "https://calendar.google.com/calendar/u/0/r"
+		;;
+
+	# StudySmarter
+	ss)
+		$browser "https://app.studysmarter.de/"
+		;;
+
+	# Google Startseite
+	g)
+		$browser "https://www.google.com/"
+		;;
+
+	# YouTube
+	yt)
+		$browser "https://www.youtube.com/"
+		;;
+
+	# Perplexity AI
+	perplexity)
+		$browser "https://www.perplexity.ai/"
+		;;
+
+	# Notizen bearbeiten
+	n)
+		gedit $HOME_DIR/Dokumente/notes &
+		;;
+
+	# Fallback: Ecosia Websuche
+	*)
+		$browser "https://www.ecosia.org/search?q=$search_query"
+		;;
+
+esac
