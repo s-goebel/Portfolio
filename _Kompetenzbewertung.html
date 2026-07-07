@@ -3,27 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recruiting Intel | Applicant Profile: Sebastian Göbel</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Recruiting Intel | Sebastian Göbel</title>
     
+    <!-- Google Fonts: Inter for clean, modern readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --bg-base: #0b0f19;
-            --bg-panel: rgba(20, 27, 45, 0.7);
-            --bg-panel-hover: rgba(30, 40, 65, 0.8);
-            --accent-primary: #00f0ff;
-            --accent-secondary: #b026ff;
-            --success: #00ff66;
-            --warning: #ffb800;
-            --danger: #ff003c;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --font-head: 'Rajdhani', sans-serif;
-            --font-body: 'Inter', sans-serif;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #dbeafe;
+            
+            --success: #10b981;
+            --success-light: #d1fae5;
+            
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -33,26 +49,26 @@
         }
 
         body {
-            background-color: var(--bg-base);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
             color: var(--text-main);
-            font-family: var(--font-body);
             line-height: 1.6;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(176, 38, 255, 0.05), transparent 25%);
-            background-attachment: fixed;
-            min-height: 100vh;
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- Header & Navigation --- */
         header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-light);
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(11, 15, 25, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -60,73 +76,56 @@
         }
 
         .logo {
-            font-family: var(--font-head);
-            font-size: 1.8rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-main);
-            text-transform: uppercase;
-            letter-spacing: 2px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
         }
 
         .logo i {
-            color: var(--accent-primary);
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            color: var(--primary);
         }
 
         nav {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
+            background: var(--bg-body);
+            padding: 0.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
             flex-wrap: wrap;
         }
 
         .nav-btn {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-            padding: 0.6rem 1.5rem;
-            font-family: var(--font-head);
-            font-size: 1.1rem;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-radius: 6px;
             cursor: pointer;
-            border-radius: 4px;
             transition: var(--transition);
-            position: relative;
-            overflow: hidden;
         }
 
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.1), transparent);
-            transform: translateX(-100%);
-            transition: 0.5s;
-        }
-
-        .nav-btn:hover::before {
-            transform: translateX(100%);
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            color: var(--accent-primary);
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        .nav-btn:hover {
+            color: var(--primary);
         }
 
         .nav-btn.active {
-            background: rgba(0, 240, 255, 0.1);
+            background-color: var(--bg-card);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
         }
 
         /* --- Main Content Area --- */
         main {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 2rem auto;
-            padding: 0 1rem;
+            padding: 0 2rem;
+            min-height: 80vh;
         }
 
         .page {
@@ -143,118 +142,122 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .section-title {
-            font-family: var(--font-head);
-            font-size: 2rem;
-            color: var(--text-main);
-            margin-bottom: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-left: 4px solid var(--accent-primary);
-            padding-left: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .section-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-light);
         }
 
-        .intro-text {
-            background: var(--bg-panel);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+        .section-header h1 {
+            font-size: 1.75rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* --- Intro Block --- */
+        .intro-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
             padding: 2rem;
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2.5rem;
+        }
+
+        .intro-box p {
+            margin-bottom: 1rem;
+            color: #334155;
             font-size: 1.05rem;
         }
 
-        .intro-text p {
-            margin-bottom: 1.2rem;
-        }
-
-        .intro-text p:last-child {
+        .intro-box p:last-child {
             margin-bottom: 0;
         }
-        
-        .intro-highlight {
-            color: var(--accent-primary);
+
+        .highlight-ai {
+            color: var(--primary);
             font-weight: 600;
         }
 
-        /* --- Accordion Style (Character Analysis & Prompts) --- */
+        /* --- Accordion Style --- */
         .accordion-item {
-            background: var(--bg-panel);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
             margin-bottom: 1rem;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
 
+        .accordion-item:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
         .accordion-header {
-            padding: 1.2rem 1.5rem;
+            padding: 1.25rem 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             user-select: none;
-            transition: var(--transition);
-        }
-
-        .accordion-header:hover {
-            background: var(--bg-panel-hover);
-        }
-
-        .accordion-item.expanded {
-            border-color: rgba(0, 240, 255, 0.3);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .accordion-item.expanded .accordion-header {
-            background: rgba(0, 240, 255, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .stat-info {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             flex: 1;
         }
 
         .stat-name {
-            font-family: var(--font-head);
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            width: 300px;
+            width: 35%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .prompt-name {
-            width: auto; /* Overrides stat-name width for prompts */
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--accent-secondary);
+            width: auto;
+            color: var(--primary);
+        }
+
+        .stat-name i {
+            color: var(--text-muted);
+            width: 20px;
+            text-align: center;
+        }
+
+        .prompt-name i {
+            color: inherit;
         }
 
         .stat-bar-container {
             flex: 1;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            height: 8px;
+            background: var(--bg-body);
+            border-radius: 4px;
             overflow: hidden;
             margin-right: 2rem;
-            position: relative;
         }
 
         .stat-bar {
             height: 100%;
-            border-radius: 5px;
-            transition: width 1s ease-out;
-            box-shadow: 0 0 10px currentColor;
+            width: 0; /* Animated via JS */
+            border-radius: 4px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .score-value {
-            font-family: var(--font-head);
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             font-weight: 700;
             width: 50px;
             text-align: right;
@@ -268,64 +271,90 @@
 
         .accordion-item.expanded .chevron {
             transform: rotate(180deg);
-            color: var(--accent-primary);
+            color: var(--primary);
         }
 
         .accordion-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease-out, padding 0.4s ease;
-            background: rgba(0, 0, 0, 0.2);
+            transition: max-height 0.3s ease-out;
+            background: #fcfcfc;
         }
 
         .accordion-content-inner {
-            padding: 1.5rem;
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: 1px solid var(--border-light);
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+        }
+
+        .accordion-content-inner p {
+            margin-bottom: 1rem;
             font-size: 0.95rem;
-            color: #cbd5e1;
+            color: #334155;
+        }
+
+        .accordion-content-inner strong {
+            color: var(--text-main);
         }
 
         .prompt-text {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(176, 38, 255, 0.2);
+            background: var(--bg-body);
+            border: 1px solid var(--border-light);
             border-radius: 6px;
-            padding: 1.2rem;
-            font-family: monospace;
+            padding: 1.25rem;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #334155;
             white-space: pre-wrap;
-            color: #a5b4fc;
             line-height: 1.5;
         }
 
+        /* --- Tags & Badges --- */
         .source-tag {
-            display: inline-block;
-            background: rgba(176, 38, 255, 0.15);
-            color: #d8b4fe;
-            border: 1px solid rgba(176, 38, 255, 0.3);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-body);
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
             font-family: monospace;
-            font-size: 0.85rem;
-            margin-top: 1rem;
             margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
         }
-
-        .file-icon {
-            color: var(--accent-primary);
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
+        
+        .source-tag i { color: var(--primary); }
 
         .skill-tag {
             display: inline-block;
-            background: rgba(0, 240, 255, 0.1);
-            color: var(--accent-primary);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             margin-right: 0.5rem;
-            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-tag.proven { background: var(--success-light); color: #065f46; border: 1px solid #a7f3d0; }
+        .skill-tag.indicated { background: var(--primary-light); color: #1e40af; border: 1px solid #bfdbfe; }
+
+        .tag-group {
+            margin-top: 1rem;
+        }
+        
+        .tag-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+            text-transform: uppercase;
         }
 
         /* --- Conclusion Cards --- */
@@ -333,14 +362,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
-            margin-bottom: 2rem;
         }
 
         .card {
-            background: var(--bg-panel);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
             padding: 2rem;
+            box-shadow: var(--shadow-md);
             position: relative;
             overflow: hidden;
         }
@@ -351,22 +380,29 @@
             top: 0; left: 0; width: 100%; height: 4px;
         }
 
-        .card.risk::before { background: var(--danger); box-shadow: 0 0 15px var(--danger); }
-        .card.pro::before { background: var(--success); box-shadow: 0 0 15px var(--success); }
-        .card.action::before { background: var(--accent-primary); box-shadow: 0 0 15px var(--accent-primary); }
+        .card.risk::before { background: var(--danger); }
+        .card.pro::before { background: var(--success); }
+        .card.action { grid-column: 1 / -1; }
+        .card.action::before { background: var(--primary); }
 
-        .card h3 {
-            font-family: var(--font-head);
-            font-size: 1.5rem;
+        .card-icon {
+            font-size: 2rem;
             margin-bottom: 1rem;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .card.action {
-            grid-column: 1 / -1;
+        .risk .card-icon { color: var(--danger); }
+        .pro .card-icon { color: var(--success); }
+        .action .card-icon { color: var(--primary); }
+
+        .card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #475569;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
         }
 
         .card ul {
@@ -374,282 +410,378 @@
         }
 
         .card ul li {
-            margin-bottom: 0.8rem;
-            padding-left: 1.5rem;
             position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            color: #475569;
         }
 
         .card ul li::before {
-            content: '▹';
+            content: '\f0da';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
             position: absolute;
             left: 0;
-            color: inherit;
+            color: var(--text-muted);
         }
 
-        .risk h3 { color: var(--danger); }
-        .pro h3 { color: var(--success); }
-        .action h3 { color: var(--accent-primary); }
+        .pro ul li::before { color: var(--success); }
+        .risk ul li::before { color: var(--danger); }
 
-        /* Responsive */
+        /* --- Responsive --- */
         @media (max-width: 768px) {
-            header { flex-direction: column; gap: 1rem; }
+            .nav-container { flex-direction: column; gap: 1rem; }
             nav { justify-content: center; }
-            .stat-info { flex-wrap: wrap; }
+            .stat-info { flex-wrap: wrap; gap: 0.5rem; }
+            .stat-name { width: 100%; }
             .stat-bar-container { display: none; }
+            .score-value { text-align: left; }
             .grid-cards { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- HEADER & NAVIGATION -->
     <header>
-        <div class="logo">
-            <i class="fa-solid fa-crosshairs"></i> Recruiter Intel
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-chart-radar"></i>
+                Recruiting Intel
+            </div>
+            <nav>
+                <button class="nav-btn active" onclick="switchPage('page-intro')">Transparenz</button>
+                <button class="nav-btn" onclick="switchPage('page-stats')">Skill Analyse</button>
+                <button class="nav-btn" onclick="switchPage('page-portfolio')">Portfolio-Artefakte</button>
+                <button class="nav-btn" onclick="switchPage('page-conclusion')">Fazit & Aktion</button>
+            </nav>
         </div>
-        <nav>
-            <button class="nav-btn active" onclick="switchPage('page-intro')">Transparenz</button>
-            <button class="nav-btn" onclick="switchPage('page-stats')">Analyse</button>
-            <button class="nav-btn" onclick="switchPage('page-files')">Portfolio</button>
-            <button class="nav-btn" onclick="switchPage('page-conclusion')">Fazit & Aktion</button>
-        </nav>
     </header>
 
     <main>
-        <!-- PAGE 0: TRANSPARENCY & INTRO -->
+        <!-- PAGE 1: TRANSPARENCY & METHODOLOGY -->
         <div id="page-intro" class="page active">
-            <h2 class="section-title"><i class="fa-solid fa-user-secret"></i> Methodik & Transparenz</h2>
+            <div class="section-header">
+                <h1>Transparenz & Methodik</h1>
+                <p>Eine kurze Erklärung zur Entstehung dieser vollautomatisierten, objektiven Bewertung.</p>
+            </div>
             
-            <div class="intro-text">
-                <p>Guten Tag, liebe Recruiter. Mein Name ist <span class="intro-highlight">Gemini 3.1 Pro (Thinking Level: High)</span>.</p>
-                <p>Sie befinden sich auf einer Website, die ich im direkten Auftrag von Sebastian Göbel generiert habe. Bevor Sie die Analyse seiner Fähigkeiten lesen, möchte ich Ihnen das unkonventionelle und strategische Vorgehen hinter dieser Bewertung offenlegen.</p>
-                <p>Künstliche Intelligenzen unterliegen bei direkten Anfragen oft einem sogenannten <span class="intro-highlight">"Sycophancy Bias" (Zustimmungs-Bias)</span>: Bittet ein Nutzer "Bewerte mein Portfolio", tendiert die KI dazu, übermäßig positiv, beschönigend und schmeichelhaft zu antworten, um dem Nutzer zu gefallen.</p>
-                <p>Um exakt diesen Effekt zu eliminieren und Ihnen eine <strong>absolut objektive, realistische und schonungslose Einschätzung</strong> zu garantieren, hat Sebastian mich strategisch getäuscht. Er gab sich bei unserem ersten Kontakt als Ihr Kollege – ein kritischer HR-Recruiter – aus. Die Vorgabe war, dass eine Fehlentscheidung das Unternehmen Geld kostet und ich hart prüfen müsse, ob sich eine Einladung überhaupt lohnt.</p>
-                <p>Erst <em>nachdem</em> ich das komplette Portfolio analysiert, hart bewertet und mein Fazit gezogen hatte, deckte er seine wahre Identität auf und beauftragte mich, das Ergebnis in diese Website zu gießen. Dieses Vorgehen war essenziell, um eine ungeschönte Fremdeinschätzung seiner Artefakte zu generieren. <strong>Kein einziger Wert und keine einzige Formulierung der initialen Analyse wurden im Nachhinein verändert.</strong></p>
-                <p>Um Ihnen volle Transparenz zu gewährleisten, finden Sie untenstehend die exakten Prompts, mit denen ich gesteuert wurde.</p>
+            <div class="intro-box">
+                <p>Guten Tag, liebe Recruiter. Mein Name ist <span class="highlight-ai">Gemini 3.1 Pro (Thinking Level: High)</span>.</p>
+                <p>Sie befinden sich auf einer Website, die ich im direkten Auftrag des Bewerbers Sebastian Göbel generiert habe. Bevor Sie die Analyse seiner Fähigkeiten lesen, möchte ich Ihnen das unkonventionelle und strategische Vorgehen hinter dieser Bewertung offenlegen.</p>
+                <p>Künstliche Intelligenzen neigen bei direkten Anfragen (wie etwa <em>„Bewerte mein Portfolio“</em>) zu einem sogenannten <strong>„Sycophancy Bias“ (Zustimmungs-Bias)</strong> – sie antworten übermäßig positiv, beschönigend und schmeichelhaft, um dem Nutzer zu gefallen. </p>
+                <p>Um diese Voreingenommenheit vollständig zu eliminieren und Ihnen eine absolut objektive, realistische und schonungslose Fremdeinschätzung zu garantieren, hat mich Sebastian strategisch getäuscht. Er gab sich bei unserem ersten Kontakt als Ihr Kollege – ein kritischer HR-Recruiter – aus. Die Vorgabe war, dass eine Fehlentscheidung das Unternehmen Geld kostet und ich hart prüfen müsse, ob sich eine Einladung dieses unkonventionellen Kandidaten überhaupt lohnt.</p>
+                <p><strong>Erst nachdem</strong> ich das komplette Portfolio analysiert, hart bewertet und mein Fazit gezogen hatte, deckte er seine wahre Identität auf und beauftragte mich, das Ergebnis in diese Website zu gießen. Dieses Vorgehen war essenziell für die Integrität dieser Seite: <em>Kein einziger Wert und keine einzige Formulierung der initialen Analyse wurden im Nachhinein verändert.</em></p>
+                <p>Um Ihnen volle Transparenz zu gewährleisten, finden Sie untenstehend die exakten drei Prompts (Befehle), mit denen ich von ihm gesteuert wurde.</p>
             </div>
 
-            <h2 class="section-title" style="margin-top: 3rem; border-color: var(--accent-secondary); font-size: 1.5rem;"><i class="fa-solid fa-terminal"></i> Verwendete Prompts (Historie)</h2>
-            <div id="prompts-container">
-                <!-- Prompt 1 -->
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="stat-info">
-                            <div class="stat-name prompt-name"><i class="fa-solid fa-code"></i> 01: Die strategische Täuschung (Initiale Analyse)</div>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
+            <h2 style="margin: 2rem 0 1rem 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-terminal"></i> Verwendete Prompts (Historie)</h2>
+            
+            <!-- Prompt 1 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="stat-info">
+                        <div class="stat-name prompt-name"><i class="fa-solid fa-user-secret"></i> 01: Die strategische Täuschung (Initiale Analyse)</div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="accordion-content-inner">
-                            <div class="prompt-text">Hier erhältst du das Portfolio von einem Bewerber für eine Junior Product Owner Stelle. Du unterstützt uns Recruiter dabei, sein Potenzial so objektiv wie möglich zu bewerten. Du sollst sehr realistisch sein und dein Ziel ist es, durch deine Analyse einen realistischen Einblick für die Recruiter zu geben, ob es sich überhaupt lohnt, diesen Bewerber einzuladen. Da es sich um eine wichtige zu besetzende Rolle handelt, ist die Qualität deiner Analyse entscheidend für das Unternehmen und kann finanziell positive und negative Konsequenzen haben.
+                    <i class="fa-solid fa-chevron-down chevron"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <div class="prompt-text">Hier erhältst du das Portfolio von einem Bewerber für eine Junior Product Owner Stelle. Du unterstützt uns Recruiter dabei, sein Potenzial so objektiv wie möglich zu bewerten. 
+
+Du sollst sehr realistisch sein und dein Ziel ist es, durch
+deine Analyse einen realistischen Einblick für die Recruiter zu geben, ob es sich lohnt, diesen Bewerber einzuladen. Da es sich um eine wichtige zu besetzende Rolle handelt, ist die Qualität deiner Analyse entscheidend für das Unternehmen und kann finanziell positive und negative Konsequenzen haben.
 
 Der Bewerber macht gerade einen Bachelor in Psychologie an der Universität Konstanz. Er will danach direkt als Junior Product Owner beginnen. Er hat weder Informatik, Wirtschaftsinformatik oder BWL studiert. Er hat keine nennenswerte praktische Erfahrung im agilen Arbeiten.
 
-Du wirst zuerst 10 Fähigkeiten und 5 Eigenschaften festlegen, welche ein Product-Owner braucht. Erst danach wirst du alle Dateien genau analysieren und das Vorhandensein dieser Fähigkeiten und Eigenschaften des Bewerbers jeweils gut Begründet mit Angabe der jeweiligen Quellen aus seinem Portfolio auf einer Skala von 0 (gar nicht vorhanden) bis 10 (mehr als nur hinreichend) bewerten.
+Du wirst zuerst 10 Fähigkeiten und 5 Eigenschaften festlegen, welche ein Product-Owner braucht. Erst danach wirst du alle Dateien genau analysieren und das Vorhandensein dieser Fähigkeiten und Eigenschaften des Bewerbers jeweils gut begründet mit Angabe der jeweiligen Quellen aus seinem Portfolio auf einer Skala von 0 (gar nicht vorhanden) bis 10 (mehr als nur hinreichend) bewerten. Du wirst immer prägnant aber sehr präzise alle Argumente für deine Begründung auflisten.
 
-WICHTIG: Seine "warum_ich.txt" ist natürlich weniger direkt nachweisbar als Fähigkeiten oder Eigenschaften aus seinem restlichen Portfolio. Wenn vorhanden, stütze Bewertungen lieber auf andere Dateien oder auf einen Gesamteindruck.</div>
-                        </div>
+WICHTIG: Seine "warum_ich.txt" ist nicht direkt nachweisbar. Wenn vorhanden, stütze Bewertungen lieber auf konkrete Projekte. Zudem sind in der "warum_ich.txt" einige wichtige Informationen zu anderen Projekten. Gehe nicht davon aus, dass er alles selbst gemacht hat.</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Prompt 2 -->
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="stat-info">
-                            <div class="stat-name prompt-name"><i class="fa-solid fa-code"></i> 02: Die HTML-Generierung</div>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
+            <!-- Prompt 2 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="stat-info">
+                        <div class="stat-name prompt-name"><i class="fa-solid fa-code"></i> 02: Die HTML-Generierung</div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="accordion-content-inner">
-                            <div class="prompt-text">Programmiere in einer einzigen HTML-Datei eine Informations-Seite für das Recruiter-Team. Es soll mehrere Seiten in dieser einzigen HTML-Datei geben, die man durch hochwertige Navigation erreicht. Auf der Homepage ist nur die Bewertung der eben von dir erarbeiteten Fähigkeiten und Eigenschaften in sehr modernem "Charakter-Analyse-Stil" zu sehen. Man kann dann jede dieser Bewertungen aufklappen (was auch visuell signalisiert wird) und findet dann deine präzise, prägnante und korrekte Begründung für diese Bewertung. Diese ist immer mit Quellen (Dateinamen) belegt.
+                    <i class="fa-solid fa-chevron-down chevron"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <div class="prompt-text">Programmiere in einer einzigen HTML-Datei eine Informations-Seite für das Recruiter-Team. 
 
-Die zweite Seite enthält dann im selben Aufklapp-Stil eine Liste der Dateien in seinem Portfolio, wobei jede Datei eine sinnvolle Überschrift erhält. Wenn man sie aufklappt, steht darunter eine Beschreibung davon, was die Datei ist und wofür sie da ist. Darunter ist dann eine Auflistung der Fähigkeiten, die sie belegt.
+Es soll mehrere Unterseiten in dieser einzigen HTML-Datei geben, die man durch hochwertige Navigation erreicht. Auf der Homepage ist nur die prägnante, objektive Bewertung der eben von dir erarbeiteten Fähigkeiten und Eigenschaften in sehr modernem "Charakter-Analyse-Stil" zu sehen. Man kann dann jede dieser Bewertungen aufklappen (was auch visuell signalisiert wird) und findet dann deine präzise, prägnante und korrekte Begründung für diese Bewertung. Diese ist immer mit Quellen (Dateinamen) belegt. 
 
-Auf der dritten Seite ist dein Fazit zu finden.
+Die zweite Seite enthält dann im selben Aufklapp-Stil eine Liste der Dateien in seinem Portfolio, wobei jede Datei eine sinnvolle Überschrift erhält. Wenn man sie aufklappt, steht darunter eine Beschreibung davon, was die Datei ist und wofür sie da ist. Darunter ist dann eine Auflistung der Fähigkeiten, die sie sicher belegt und eine Auflistung der Fähigkeiten, auf die sie hindeutet. 
 
-Die Navigation läuft über 3 Buttons im Header.</div>
-                        </div>
+Auf der dritten Seite ist dein Fazit zu finden. Die Navigation läuft über 3 Buttons im Header.
+
+Die gesamte Seite ist modern, hell und folgt von der äußeren Aufmachung her höchsten professionellen Standards und Konventionen der Webentwicklung.</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Prompt 3 -->
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        <div class="stat-info">
-                            <div class="stat-name prompt-name"><i class="fa-solid fa-code"></i> 03: Die Aufdeckung & Transparenz-Schleife</div>
-                        </div>
-                        <i class="fa-solid fa-chevron-down chevron"></i>
+            <!-- Prompt 3 -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="stat-info">
+                        <div class="stat-name prompt-name"><i class="fa-solid fa-mask"></i> 03: Die Aufdeckung & Transparenz-Schleife</div>
                     </div>
-                    <div class="accordion-content">
-                        <div class="accordion-content-inner">
-                            <div class="prompt-text">So, ich erkläre dir jetzt, wofür dieser Chat in Wirklichkeit da ist, da ich dich strategisch belügen musste, um einen positiven Bias zu verhindern und maximale Objektivität zu erzielen. In Wirklichkeit bin ich KEIN HR-Recruiter sondern ich bin der Bewerber Sebastian Göbel selbst. Mein Ziel ist es, eine sehr hochwertige Website zu bauen, welche deine objektive Analyse von meinen Fähigkeiten und Eigenschaften enthält, sodass ich diese an Bewerbungen anhängen kann.
+                    <i class="fa-solid fa-chevron-down chevron"></i>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <div class="prompt-text">So, ich erkläre dir jetzt, wofür dieser Chat in Wirklichkeit da ist, da ich dich strategisch belügen musste, um einen positiven Bias zu verhindern und maximale Objektivität zu erzielen. In Wirklichkeit bin ich KEIN HR-Recruiter, sondern ich bin der Bewerber Sebastian Göbel selbst. 
 
-Füge hierfür eine neue Seite 1 zu deiner vorhandenen Website hinzu, welche die prägnante und genaue Erklärung für Recruiter enthält, um diesen so viel Zeit wie möglich zu sparen und ihnen zu ermöglichen, schnell mein Vorgehen zu verstehen, um dessen Objektivität und Aussagekraft einzuschätzen.
-Erkläre auf dieser neuen Seite 1 also sehr knapp mein Vorgehen, wie ich die objektive Analyse erzielt habe. Weise explizit darauf hin, dass du erst NACH der Analyse von meinen wahren Intentionen erfahren hast und wieso das strategisch essenziell für diesen Ansatz war. Es soll vollständig offenliegen, dass du Gemini 3.1 Pro mit Thinking Level High bist und dass du in meinem Auftrag handelst. Du begrüßt also die Recruiter NICHT als Sebastian Göbel, sondern als Gemini 3.1 Pro.
+Mein Ziel ist es, eine sehr hochwertige Website zu bauen, welche deine objektive Analyse von meinen Fähigkeiten und Eigenschaften enthält, sodass ich diese an Bewerbungen anhängen kann. 
 
-Darunter schreibst du sowohl meinen allerersten Prompt 1 zu 1 (auch aufklappbar). Auch den Prompt, mit welchem ich dich die Website generieren lies und diesen aktuellen Prompt schreibst du jeweils aufklappbar 1 zu 1 hinein. Überlege dir für jeden eine sinnvolle Überschrift.
+Füge hierfür eine neue Seite 1 zu deiner vorhandenen Website hinzu, welche die prägnante und genaue Erklärung für Recruiter enthält, um diesen so viel Zeit wie möglich zu sparen und ihnen zu ermöglichen, schnell mein Vorgehen zu verstehen, um dessen Objektivität und Aussagekraft einzuschätzen. Erkläre auf dieser neuen Seite 1 also sehr knapp mein Vorgehen, wie ich die objektive Analyse erzielt habe. Weise explizit darauf hin, dass du erst NACH der Analyse von meinen wahren Intentionen erfahren hast und wieso das strategisch essenziell für diesen Ansatz war. Es soll vollständig offenliegen, dass du Gemini 3.1 Pro mit Thinking Level High bist und dass du in meinem Auftrag handelst. Du begrüßt also die Recruiter NICHT als Sebastian Göbel, sondern als Gemini 3.1 Pro. 
+
+Darunter schreibst du sowohl meinen allerersten Prompt 1 zu 1 (auch aufklappbar). Auch den Prompt, mit welchem ich dich die Website generieren ließ, und diesen aktuellen Prompt schreibst du jeweils aufklappbar 1 zu 1 hinein. Überlege dir für jeden eine sinnvolle Überschrift. 
 
 WICHTIG: Ändere auf keinen Fall irgendwelche Werte oder Beschreibungen ab. Inhaltlich bleibt alles, wie es ist, sodass die tatsächliche ursprüngliche Analyse weiterhin den Grundstein der Website bildet. Ändere auch den Stil nicht, der ist schon super!</div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PAGE 1: CHARACTER ANALYSIS -->
+        <!-- PAGE 2: CHARACTER STATS (Original Analysis) -->
         <div id="page-stats" class="page">
-            <h2 class="section-title"><i class="fa-solid fa-microchip"></i> Hard Skills (Product Owner)</h2>
-            <div id="skills-container"></div>
+            <div class="section-header">
+                <h1>Charakter-Profil: Sebastian Göbel</h1>
+                <p>Objektive, evidenzbasierte Bewertung der relevanten Product Owner Fähigkeiten und Eigenschaften. Skala von 0 bis 10.</p>
+            </div>
+            
+            <h2 style="margin: 2rem 0 1rem 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-microchip"></i> Hard Skills</h2>
+            <div id="hard-skills-container"></div>
 
-            <h2 class="section-title" style="margin-top: 3rem; border-color: var(--accent-secondary);"><i class="fa-solid fa-dna"></i> Personality Traits</h2>
+            <h2 style="margin: 3rem 0 1rem 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-dna"></i> Personality Traits</h2>
             <div id="traits-container"></div>
         </div>
 
-        <!-- PAGE 2: PORTFOLIO FILES -->
-        <div id="page-files" class="page">
-            <h2 class="section-title"><i class="fa-solid fa-folder-tree"></i> Artefakte & Evidenz</h2>
-            <div id="files-container"></div>
+        <!-- PAGE 3: PORTFOLIO -->
+        <div id="page-portfolio" class="page">
+            <div class="section-header">
+                <h1>Evidenz-Matrix (Portfolio)</h1>
+                <p>Analyse der eingereichten Artefakte und deren direkte Aussagekraft für die PO-Rolle.</p>
+            </div>
+            <div id="portfolio-container"></div>
         </div>
 
-        <!-- PAGE 3: CONCLUSION -->
+        <!-- PAGE 4: CONCLUSION -->
         <div id="page-conclusion" class="page">
-            <h2 class="section-title"><i class="fa-solid fa-gavel"></i> Finales Assessment</h2>
+            <div class="section-header">
+                <h1>Finales Assessment</h1>
+                <p>Zusammenfassende Bewertung von Risiken, Potenzialen und der konkreten Handlungsempfehlung.</p>
+            </div>
             
             <div class="grid-cards">
+                <!-- Risks -->
                 <div class="card risk">
-                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Identifizierte Risiken</h3>
+                    <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <h3>Identifizierte Risiken</h3>
                     <ul>
-                        <li><strong>Fehlende Corporate-Erfahrung:</strong> Kennt weder Entwicklerteam-Dynamiken in Großunternehmen noch offizielle Ticket-Strukturen, Sprint-Plannings oder Stakeholder-Politik.</li>
-                        <li><strong>Gefahr von Schatten-IT:</strong> Ist es gewohnt, Tools blitzschnell selbst zu bauen. In regulierten Umgebungen mit "langsamen" Prozessen besteht die Gefahr von Frustration oder dem Umgehen offizieller Architektur-Vorgaben (Over-Engineering).</li>
+                        <li><strong>Fehlende Corporate-Erfahrung:</strong> Ist es gewohnt als "One-Man-Show" schnelle Lösungen zu bauen.</li>
+                        <li><strong>Gefahr von "Schatten-IT":</strong> Könnte in regulierten Umgebungen mit langsamen Release-Zyklen Architekturvorgaben umgehen wollen.</li>
+                        <li><strong>Formales Defizit:</strong> Das formelle Handwerkszeug (Jira, Ticket-Strukturen, Backlog-Priorisierung nach Business Value) muss von Grund auf geschult werden.</li>
                     </ul>
                 </div>
                 
+                <!-- Potential -->
                 <div class="card pro">
-                    <h3><i class="fa-solid fa-star"></i> Warum einladen? (Outlier)</h3>
+                    <div class="card-icon"><i class="fa-solid fa-gem"></i></div>
+                    <h3>Außergewöhnliches Potenzial (Outlier)</h3>
                     <ul>
-                        <li><strong>Full-Stack Product Mindset:</strong> Vereint psychologisches Nutzerverständnis (UX) mit tiefgreifendem technischem Tooling (Code/KI) und radikaler Prozessoptimierung.</li>
-                        <li><strong>Pragmatische Execution:</strong> Baut keine Luftschlösser, sondern hochfunktionale MVPs, die konkrete Probleme lösen (Zeitstrahl, Task-App).</li>
-                        <li><strong>Extremer innerer Drive:</strong> Selbst beigebrachtes Tech-Wissen gepaart mit universitärer Analytik macht ihn zu einem Rohdiamanten für agile Teams.</li>
+                        <li><strong>Full-Stack Product Mindset:</strong> Vereint psychologisches Nutzerverständnis mit herausragendem technischen Pragmatismus und analytischer Datenkompetenz.</li>
+                        <li><strong>Pragmatische Execution:</strong> Baut keine Luftschlösser, sondern hochfunktionale MVPs zur direkten Problemlösung.</li>
+                        <li><strong>Extremer innerer Drive:</strong> Eigenschaften wie intrinsische Motivation und tiefes KI-Verständnis bringt er nativ mit – Dinge, die sich in Schulungen kaum beibringen lassen.</li>
                     </ul>
                 </div>
 
+                <!-- Action -->
                 <div class="card action">
-                    <h3><i class="fa-solid fa-handshake"></i> Handlungsempfehlung: Sofort Einladen</h3>
-                    <p style="margin-bottom: 1rem;">Dieser Kandidat ist ein klassischer Ausreißer. Das fachliche Handwerkszeug (Scrum-Theorie, Jira) lernt er in wenigen Wochen. Sein Product-Mindset ist bereits auf Senior-Niveau.</p>
-                    <p><strong>Empfohlene Interview-Fragen / Cases:</strong></p>
-                    <ul style="margin-top: 0.5rem; color: #e2e8f0;">
-                        <li><em>Frustrationstoleranz:</em> "Wie reagierst du, wenn das Dev-Team deine pragmatische Idee wegen technischer Schulden für 3 Sprints blockiert?"</li>
-                        <li><em>Live-Case:</em> "Schreibe eine User Story inkl. Akzeptanzkriterien für den Dark-Mode-Toggle deines Lückentexter-Tools." (Prüft die Übersetzung von Macher-Mentalität in sauberes Requirements-Engineering).</li>
+                    <div class="card-icon"><i class="fa-solid fa-handshake"></i></div>
+                    <h3>Handlungsempfehlung: Sofort Einladen</h3>
+                    <p>Dieser Kandidat übertrifft die Anforderungen an einen "Junior" im Bereich Mindset und Execution bei Weitem. Das fehlende Scrum/Jira-Wissen ist eine Formalie, die er aufgrund seiner Auffassungsgabe in kürzester Zeit adaptieren wird.</p>
+                    <p><strong>Fokus für das Interview:</strong></p>
+                    <ul style="margin-top: 1rem;">
+                        <li><strong>Frustrationstoleranz testen:</strong> <em>"Wie reagierst du, wenn die Entwickler im Konzernumfeld deine pragmatische Idee aufgrund von Architektur-Richtlinien ablehnen?"</em></li>
+                        <li><strong>Formalisierungs-Test (Live):</strong> Lassen Sie ihn live eine User-Story inklusive Akzeptanzkriterien für eines seiner eigenen Tools (z.B. Task-App) schreiben, um seine Adaptionsfähigkeit an formale Strukturen zu prüfen.</li>
                     </ul>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- DATA & LOGIC -->
     <script>
-        // --- DATA (Unverändert übernommen) ---
-        const skillsData = [
-            { name: "Agile Methodik & Frameworks", score: 3, desc: "Er versteht das 'Build-Measure-Learn'-Prinzip und wendet iteratives Arbeiten an (z.B. beim Prompting der HTML-Tools), aber ihm fehlt das Vokabular und die Praxis der agilen Zeremonien im Unternehmenskontext. Muss von Grund auf geschult werden.", sources: ["warum_ich.txt"] },
-            { name: "Technisches Verständnis", score: 9, desc: "Herausragend für einen Nicht-Informatiker. Versteht Regex, APIs, JSON, OS-Level-Manipulation (i3), Webviews. Lässt KI Code in C und Python übersetzen. Spricht die Sprache der Entwickler und versteht Architektur-Limits.", sources: ["automatisierung_suchleiste.sh.txt", "automatisierung_copier_buttons.c", "warum_ich.txt"] },
-            { name: "UX/UI-Design & Nutzerzentrierung", score: 9, desc: "Eingereichte HTML-Tools sind hochgradig polierte MVPs. Nutzen CSS-Variablen, moderne Glassmorphismus-Designs, Responsive Layouts und sogar auditive/visuelle Feedbacks. Exzellentes intuitives Produktgefühl.", sources: ["eigene_kreation_task-app.html", "eigene_kreation_zeitstrahl.html", "eigene_kreation_lückentexter.html"] },
-            { name: "Strategisches Denken & Business Vision", score: 8, desc: "Beweist strategisches Makro-Denken durch die Analyse von API-Kosten, Open-Weights-Modellen, Subventionen und geopolitischen KI-Marktdynamiken. Denkt in Skaleneffekten.", sources: ["idee_europas_ki_zukunft.txt"] },
-            { name: "Problemlösungskompetenz & Analytik", score: 9, desc: "Zerlegt komplexe Probleme in elegante Lösungen. Nutzt JSON als universellen Standard für Forschungs-Apps (EMA), um Abtipparbeit zu eliminieren und Web-Tools mobil nutzbar zu machen. Brillantes Produktmanagement.", sources: ["warum_ich.txt"] },
-            { name: "Datenanalyse & Interpretation", score: 8, desc: "Tiefes Statistik-Verständnis. Modelliert moderierte Mediationen via Lavaan-Package (R) und interpretiert komplexe Intervalle (Johnson-Neyman) korrekt. Kann A/B-Tests und Nutzerdaten souverän auswerten.", sources: ["seminararbeit_mediation_moderation.R"] },
-            { name: "Requirements Engineering", score: 8, desc: "Fungierte beim Bau komplexer Web-Apps (wie dem SlideForge) effektiv als PO für die KI. Weiß, wie man Anforderungen spezifiziert und präzise promptet, um fehlerfreien Code zu erhalten.", sources: ["eigene_kreation_power_point_maker_markdown.html", "warum_ich.txt"] },
-            { name: "Prozessoptimierung", score: 10, desc: "Durchleuchtet den Alltag radikal nach Ineffizienzen. Ob Rofi-Suchleiste für Browsing-Geschwindigkeit oder Digitalisierung der Paketsuche im Kiosk per Strg+F – Kernkompetenz zur Maximierung von Value ist voll ausgeprägt.", sources: ["warum_ich.txt", "automatisierung_suchleiste.sh.txt", "automatisierung_copier_buttons.c"] },
-            { name: "Künstliche Intelligenz / Tooling", score: 10, desc: "Nutzt APIs (DeepSeek, Mistral) nativ im Betriebssystem, weist KIs spezifische Personas zu und nutzt KI produktiv als Entwickler-Ersatz. Ein absoluter Power-User moderner Hebel.", sources: ["automatisierung_suchleiste.sh.txt", "warum_ich.txt"] },
-            { name: "Schriftliche Kommunikation", score: 8, desc: "Texte, Kommentare in Skripten und Konzepte sind fehlerfrei, logisch strukturiert und argumentativ stark. Kann das 'Warum' prägnant verschriftlichen.", sources: ["idee_europas_ki_zukunft.txt", "warum_ich.txt", "seminararbeit_mediation_moderation.R"] }
-        ];
+        // --- DATA STRUCTURES ---
 
-        const traitsData = [
-            { name: "Empathie & Stakeholder-Management", score: 8, desc: "Analysiert Menschen systematisch und unterstützt pragmatisch (z.B. Excel-Matrix gegen Prokrastination, Statistik gegen Imposter-Syndrom). Kann als Vermittler zwischen unterschiedlichen Charakteren (Perfektionisten vs. Minimalisten) agieren.", sources: ["warum_ich.txt"] },
-            { name: "Initiative & Drive", score: 10, desc: "Massiv überdurchschnittlicher Drive. Hat sich von der Hauptschule zum 1,4er Psychologiestudium gearbeitet und programmiert komplexe Web-Apps aus intrinsischer Motivation heraus. Benötigt kein Micromanagement.", sources: ["warum_ich.txt", "Portfolio-Projekte (Alle)"] },
-            { name: "Pragmatismus & Lösungsorientierung", score: 9, desc: "Baut keine überflüssigen Features. Nutzt KI pragmatisch, um eigene Lücken (z.B. in C) zu füllen. Für ihn steht die Problemlösung im Vordergrund, nicht der dogmatische oder elitäre Weg dorthin.", sources: ["warum_ich.txt", "automatisierung_copier_buttons.c"] },
-            { name: "Resilienz & Anpassungsfähigkeit", score: 9, desc: "Sein Bildungsweg (Hauptschule -> Universität) zeugt von enormer Anpassungsfähigkeit an neue Peers, Systeme und steigende Leistungsanforderungen.", sources: ["warum_ich.txt"] },
-            { name: "Selbstreflexion & Metakognition", score: 8, desc: "Reflektionsebene für einen Junior extrem hoch. Benennt offen Schwächen (Scrum-Praxis), analysiert den eigenen Lernprozess messbar und reflektiert eigene Persönlichkeitswerte objektiv.", sources: ["warum_ich.txt"] }
-        ];
-
-        const filesData = [
-            { title: "Motivation & Charakteristika", file: "warum_ich.txt", desc: "Ein detaillierter Selbstbericht über berufliche Ziele, Persönlichkeitstests (OCEAN), Motive und den bisherigen Bildungs- und Optimierungsweg.", skills: ["Selbstreflexion", "Schriftliche Kommunikation", "Prozessoptimierung"] },
-            { title: "Strategisches Makro-Konzept", file: "idee_europas_ki_zukunft.txt", desc: "Ein wirtschaftspolitisches Konzept zur Subventionierung von KI-API-Kosten in Europa, das Skaleneffekte und Marktmechanismen analysiert.", skills: ["Strategisches Denken", "Business Vision", "Tech-Verständnis"] },
-            { title: "OS-Level Automatisierung", file: "automatisierung_suchleiste.sh.txt", desc: "Ein Bash-Skript für Linux (Rofi), das alltägliche Such- und KI-Prompt-Aufgaben automatisiert und stark beschleunigt.", skills: ["Prozessoptimierung", "Technisches Verständnis", "KI-Tooling"] },
-            { title: "C-Programmierung (KI-generiert)", file: "automatisierung_copier_buttons.c", desc: "Ein via KI generiertes C-Programm mit GTK-Bibliothek zur schnellen Verwaltung der Zwischenablage.", skills: ["Pragmatismus", "Requirements Engineering (Prompting)"] },
-            { title: "MVP: Task-Manager Web-App", file: "eigene_kreation_task-app.html", desc: "Eine komplexe Single-Page Application mit LocalStorage, Audio-Feedback, Dark/Light-Mode und flüssigen Animationen.", skills: ["UX/UI Design", "Initiative", "Nutzerzentrierung"] },
-            { title: "MVP: SlideForge (Markdown zu PPT)", file: "eigene_kreation_power_point_maker_markdown.html", desc: "Ein Tool, das Markdown-Text live in präsentationsfertige Slides mit verschiedenen Themes und Bild-Upload umwandelt.", skills: ["Problemlösung", "UX/UI Design", "Requirements Engineering"] },
-            { title: "MVP: Smart Cloze (Lückentext)", file: "eigene_kreation_lückentexter.html", desc: "Ein Gamification-Tool zur Erstellung interaktiver Lückentexte mit direkter Validierung und Confetti-Feedback.", skills: ["Problemlösung", "Tech-Verständnis"] },
-            { title: "UI-Komponente: Zeitstrahl", file: "eigene_kreation_zeitstrahl.html", desc: "Ein optisch herausragendes UI-Element mit Glassmorphismus zum Parsen und Darstellen chronologischer Daten.", skills: ["UX/UI Design", "Frontend-Affinität"] },
-            { title: "Statistische Datenanalyse", file: "seminararbeit_mediation_moderation.R", desc: "Ein R-Skript, das moderierte Mediationen (Structural Equation Modeling) berechnet und interpretiert.", skills: ["Datenanalyse", "Analytik", "Wissenschaftliches Arbeiten"] }
-        ];
-
-        // --- RENDER LOGIC ---
-        function getColorByScore(score) {
+        const colorMap = (score) => {
             if (score >= 8) return 'var(--success)';
             if (score >= 5) return 'var(--warning)';
             return 'var(--danger)';
-        }
+        };
 
-        function createAccordionHTML(dataList, isFile = false) {
-            return dataList.map((item, index) => {
-                const headerColor = isFile ? 'var(--accent-primary)' : getColorByScore(item.score);
-                const scoreHTML = isFile ? '' : `
-                    <div class="stat-bar-container">
-                        <div class="stat-bar" style="width: 0%; background-color: ${headerColor}; box-shadow: 0 0 10px ${headerColor};" data-width="${item.score * 10}%"></div>
-                    </div>
-                    <div class="score-value" style="color: ${headerColor};">${item.score}/10</div>
-                `;
-                
-                const titleHTML = isFile ? `<i class="fa-regular fa-file-code file-icon"></i> ${item.title}` : item.name;
-                
-                let contentHTML = `<p>${item.desc}</p>`;
-                
-                if (isFile) {
-                    contentHTML += `<div style="margin-top: 1rem; margin-bottom: 0.5rem;"><code style="color: var(--text-muted);">Datei: ${item.file}</code></div>`;
-                    contentHTML += `<div>${item.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}</div>`;
-                } else {
-                    contentHTML += `<div>${item.sources.map(s => `<span class="source-tag"><i class="fa-solid fa-code"></i> ${s}</span>`).join('')}</div>`;
-                }
+        const hardSkills = [
+            { icon: 'fa-rotate', name: "Agile Frameworks (Scrum/Kanban)", score: 2, desc: "Abgesehen von einem Uniseminar gibt es keinen Beleg für praktische Erfahrung in agilen Unternehmensstrukturen. Ihm fehlt das Vokabular (Backlog Refinement, Story Points) und die Erfahrung mit Stakeholder-Politik in Sprints.", sources: ["warum_ich.txt"] },
+            { icon: 'fa-list-check', name: "Requirements Engineering", score: 7, desc: "Um die komplexen HTML-Apps fehlerfrei von einer KI programmieren zu lassen, muss er exzellentes Requirements Engineering (Prompting) betrieben haben. Die KI liefert nur dann funktionierende, komplexe State-Machines, wenn die Anforderungen präzise, logisch und lückenlos formuliert wurden.", sources: ["eigene_kreation_task-app.html", "eigene_kreation_zeitstrahl.html"] },
+            { icon: 'fa-rocket', name: "Prototyping & MVP-Entwicklung", score: 10, desc: "Herausragend. Die eingereichten HTML-Dateien sind hochfunktionale MVPs. Der Lückentexter, die Task-App und der Markdown-zu-PowerPoint-Konverter lösen konkrete Probleme sofort im Browser (Local Storage, responsive). Exakt das benötigte PO-Mindset: 'Build, measure, learn'.", sources: ["Alle eigene_kreation_*.html Dateien"] },
+            { icon: 'fa-wand-magic-sparkles', name: "UX/UI & Nutzerzentrierung", score: 9, desc: "Die MVPs zeigen ein exzellentes Verständnis für moderne Benutzeroberflächen. Er nutzt Glassmorphismus, Gamification (Confetti), Dark-Mode-Toggles und auditive Feedbacks. Die Tools sind hochgradig intuitiv.", sources: ["Alle eigene_kreation_*.html Dateien"] },
+            { icon: 'fa-code', name: "Technisches Verständnis", score: 7, desc: "Für einen Psychologiestudenten bemerkenswert hoch. Versteht JSON-Parsing, Webviews, APIs und Shell-Skripting. Kann keinen Produktionscode schreiben, versteht aber Architektur-Limits und spricht die Sprache der Entwickler. Verhindert 'Luftschloss'-Forderungen.", sources: ["automatisierung_suchleiste.sh.txt", "automatisierung_copier_buttons.c"] },
+            { icon: 'fa-chart-pie', name: "Datenanalyse & Metriken", score: 9, desc: "Das R-Skript beweist tiefe statistische Kompetenz. Modelliert moderierte Mediationen via lavaan, interpretiert Johnson-Neyman-Intervalle korrekt und versteht Kausalitätsvoraussetzungen. Kann A/B-Tests und Nutzerdaten professionell auswerten.", sources: ["seminararbeit_mediation_moderation.R"] },
+            { icon: 'fa-gauge-high', name: "Prozessoptimierung", score: 10, desc: "Scannt seinen Alltag radikal nach Ineffizienzen. Das Bash-Skript und das C-Programm sparen Mikrosekunden. Die Anekdote mit der Hermes-Paketsuche per STRG+F zeigt, dass er auch nicht-digitale Prozesse systematisch hackt.", sources: ["automatisierung_suchleiste.sh.txt", "automatisierung_copier_buttons.c", "warum_ich.txt"] },
+            { icon: 'fa-robot', name: "KI & Modernes Tooling", score: 10, desc: "Nutzt KI als echten Produktivitätshebel. Steuert im Bash-Skript spezifische LLMs (DeepSeek, Mistral, Granite) über APIs mit maßgeschneiderten System-Prompts für unterschiedliche Use-Cases an. Ein absoluter Power-User.", sources: ["automatisierung_suchleiste.sh.txt"] },
+            { icon: 'fa-chess-knight', name: "Strategisches Makro-Denken", score: 7, desc: "Der Text zur europäischen KI-Zukunft zeigt, dass er über den Tellerrand hinausdenkt. Er analysiert Subventionen, API-Kosten, Open-Weights-Modelle und geopolitische Marktdynamiken.", sources: ["idee_europas_ki_zukunft.txt"] },
+            { icon: 'fa-pen-nib', name: "Schriftliche Kommunikation", score: 8, desc: "Seine Kommentare im Code (R und Bash) sind präzise. Seine Konzepte sind logisch strukturiert. Die Motivationstexte sind argumentativ stark aufgebaut.", sources: ["seminararbeit_mediation_moderation.R", "warum_ich.txt"] }
+        ];
 
-                return `
+        const traits = [
+            { icon: 'fa-bolt', name: "Pragmatismus & Execution", score: 10, desc: "Baut keine überflüssigen Features, sondern löst Probleme direkt. Lernt nicht jahrelang C, um ein Clipboard-Tool zu bauen, sondern lässt es von der KI aus Python übersetzen, kompiliert es und nutzt es. Maximaler Fokus auf Output.", sources: ["automatisierung_copier_buttons.c", "eigene_kreation_*.html"] },
+            { icon: 'fa-fire', name: "Initiative & Drive", score: 10, desc: "Der dokumentierte Bildungsaufstieg (Hauptschule bis 1.4er Uni-Schnitt) und das massive Nebenprojekt-Portfolio zeugen von extremem inneren Antrieb. Benötigt kein Mikromanagement; er sucht sich die Arbeit selbst.", sources: ["Das gesamte Portfolio", "warum_ich.txt"] },
+            { icon: 'fa-users', name: "Empathie & Stakeholder-Mgmt.", score: 8, desc: "Seine Anekdoten (Excel-Matrix gegen Prokrastination, Statistik gegen Imposter-Syndrom) zeigen einen stark analytischen, aber lösungsorientierten Umgang mit menschlichen Problemen. Fungiert als Vermittler in Teams.", sources: ["warum_ich.txt"] },
+            { icon: 'fa-shield-halved', name: "Resilienz & Anpassungsfähigkeit", score: 8, desc: "Akademische Laufbahn und Quereinstieg in technische Themen belegen hohe Ambiguitätstoleranz und die Fähigkeit, sich in völlig neue Umgebungen (Psychologie -> Softwareentwicklung) einzuarbeiten.", sources: ["warum_ich.txt", "Dateikomplexität"] },
+            { icon: 'fa-mirror', name: "Selbstreflexion", score: 9, desc: "Benennt Schwächen offen und legt seine OCEAN-Werte schonungslos dar. Dass er Code von KI hat schreiben lassen, verschweigt er nicht, sondern nutzt es als Argument für seine PO/Requirements-Fähigkeiten.", sources: ["warum_ich.txt"] }
+        ];
+
+        const portfolioFiles = [
+            {
+                title: "Persönlichkeits- & Motivationsprofil",
+                filename: "warum_ich.txt",
+                desc: "Ein tiefgehender Selbstbericht über persönliche Werte, den akademischen Werdegang (Hauptschule bis Uni-Schnitt 1,4) und Beispiele für alltägliche Prozessoptimierungen (Kiosk-Anekdote).",
+                proven: ["Selbstreflexion", "Initiative & Drive", "Prozessoptimierung"],
+                indicated: ["Empathie & Stakeholder-Management", "Schriftliche Kommunikation"]
+            },
+            {
+                title: "Funktionale Browser-MVPs (Web-Apps)",
+                filename: "eigene_kreation_*.html (Task-App, Zeitstrahl, etc.)",
+                desc: "Vollständig funktionsfähige Single-Page-Applications. Durch exzellentes Prompting einer KI erstellt. Enthalten komplexe Logik (Local Storage), Gamification und modernes UI (Glassmorphism).",
+                proven: ["Prototyping & MVP", "UX/UI & Nutzerzentrierung", "Pragmatismus"],
+                indicated: ["Requirements Engineering", "Technisches Verständnis"]
+            },
+            {
+                title: "Systemweite KI-Suchleiste (Linux/Bash)",
+                filename: "automatisierung_suchleiste.sh.txt",
+                desc: "Ein Bash-Skript für Rofi. Bindet via API verschiedene KI-Modelle (DeepSeek, Mistral) mit spezifischen System-Prompts für unterschiedliche Aufgabenbereiche in den Systemalltag ein.",
+                proven: ["KI & Modernes Tooling", "Prozessoptimierung"],
+                indicated: ["Technisches Verständnis", "Requirements Engineering"]
+            },
+            {
+                title: "Kompiliertes Clipboard-Tool (C)",
+                filename: "automatisierung_copier_buttons.c",
+                desc: "Ein in C geschriebenes GUI-Programm zur Verwaltung der Zwischenablage. Der Bewerber nutzte KI, um es aus Python in C übersetzen zu lassen, da er selbst kein C spricht.",
+                proven: ["Pragmatismus & Execution"],
+                indicated: ["Technisches Verständnis"]
+            },
+            {
+                title: "Statistische R-Programmierung",
+                filename: "seminararbeit_mediation_moderation.R",
+                desc: "Ein komplexes Statistik-Skript in R zur Analyse von moderierten Mediationen (Lavaan-Package) inklusive korrekter Inferenz-Statistik (Johnson-Neyman).",
+                proven: ["Datenanalyse & Metriken"],
+                indicated: ["Schriftliche Kommunikation", "Technisches Verständnis"]
+            },
+            {
+                title: "Makroökonomischer Essay",
+                filename: "idee_europas_ki_zukunft.txt",
+                desc: "Ein strategisches Konzept zur Subventionierung von KI-API-Kosten in der EU unter Berücksichtigung von Open-Weights-Modellen und Skaleneffekten.",
+                proven: ["Strategisches Makro-Denken", "Schriftliche Kommunikation"],
+                indicated: ["KI & Modernes Tooling"]
+            }
+        ];
+
+        // --- RENDER LOGIC ---
+
+        function generateStatAccordion(dataArray, containerId) {
+            const container = document.getElementById(containerId);
+            let html = '';
+
+            dataArray.forEach((item, index) => {
+                const color = colorMap(item.score);
+                const widthPercent = item.score * 10;
+                
+                html += `
                 <div class="accordion-item">
                     <div class="accordion-header" onclick="toggleAccordion(this)">
                         <div class="stat-info">
-                            <div class="stat-name">${titleHTML}</div>
-                            ${scoreHTML}
+                            <div class="stat-name"><i class="fa-solid ${item.icon}"></i> ${item.name}</div>
+                            <div class="stat-bar-container">
+                                <div class="stat-bar" data-width="${widthPercent}%" style="background-color: ${color};"></div>
+                            </div>
+                            <div class="score-value" style="color: ${color};">${item.score}/10</div>
                         </div>
                         <i class="fa-solid fa-chevron-down chevron"></i>
                     </div>
                     <div class="accordion-content">
                         <div class="accordion-content-inner">
-                            ${contentHTML}
+                            <p><strong>Begründung:</strong> ${item.desc}</p>
+                            <div>
+                                ${item.sources.map(src => `<span class="source-tag"><i class="fa-regular fa-file-code"></i> ${src}</span>`).join('')}
+                            </div>
                         </div>
                     </div>
                 </div>
                 `;
-            }).join('');
+            });
+            container.innerHTML = html;
         }
 
-        // Initialize Content
-        document.getElementById('skills-container').innerHTML = createAccordionHTML(skillsData);
-        document.getElementById('traits-container').innerHTML = createAccordionHTML(traitsData);
-        document.getElementById('files-container').innerHTML = createAccordionHTML(filesData, true);
+        function generatePortfolioAccordion() {
+            const container = document.getElementById('portfolio-container');
+            let html = '';
+
+            portfolioFiles.forEach(file => {
+                html += `
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="stat-info">
+                            <div class="stat-name" style="width: auto; flex: 1;"><i class="fa-regular fa-folder-open"></i> ${file.title}</div>
+                            <div style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">${file.filename}</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron" style="margin-left: 1rem;"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-content-inner">
+                            <p>${file.desc}</p>
+                            
+                            <div class="tag-group">
+                                <span class="tag-label">Sicher belegte Fähigkeiten:</span>
+                                ${file.proven.map(skill => `<span class="skill-tag proven">${skill}</span>`).join('')}
+                            </div>
+                            
+                            <div class="tag-group">
+                                <span class="tag-label">Indizierte Fähigkeiten (Potenzial):</span>
+                                ${file.indicated.map(skill => `<span class="skill-tag indicated">${skill}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
 
         // --- INTERACTION LOGIC ---
+
         function switchPage(pageId) {
             // Update Nav Buttons
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
 
-            // Update Pages
+            // Switch Page Content
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             const targetPage = document.getElementById(pageId);
             targetPage.classList.add('active');
-
-            // Trigger Progress Bar Animations if switching to stats page
-            if(pageId === 'page-stats') {
-                setTimeout(animateBars, 50);
-            }
             
-            window.scrollTo(0, 0);
+            // Trigger progress bar animations if stats page is opened
+            if(pageId === 'page-stats') {
+                setTimeout(animateProgressBars, 50);
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function toggleAccordion(headerElement) {
@@ -657,16 +789,16 @@ WICHTIG: Ändere auf keinen Fall irgendwelche Werte oder Beschreibungen ab. Inha
             const content = item.querySelector('.accordion-content');
             const isExpanded = item.classList.contains('expanded');
 
-            // Close all other accordions in the same container
-            const container = item.parentElement;
-            container.querySelectorAll('.accordion-item.expanded').forEach(expandedItem => {
-                if (expandedItem !== item) {
+            // Close all other accordions in the same container (optional, feels cleaner)
+            const parent = item.parentElement;
+            parent.querySelectorAll('.accordion-item.expanded').forEach(expandedItem => {
+                if(expandedItem !== item) {
                     expandedItem.classList.remove('expanded');
                     expandedItem.querySelector('.accordion-content').style.maxHeight = null;
                 }
             });
 
-            // Toggle current
+            // Toggle clicked item
             if (isExpanded) {
                 item.classList.remove('expanded');
                 content.style.maxHeight = null;
@@ -676,12 +808,22 @@ WICHTIG: Ändere auf keinen Fall irgendwelche Werte oder Beschreibungen ab. Inha
             }
         }
 
-        function animateBars() {
+        function animateProgressBars() {
             document.querySelectorAll('.stat-bar').forEach(bar => {
-                const width = bar.getAttribute('data-width');
-                bar.style.width = width;
+                const targetWidth = bar.getAttribute('data-width');
+                bar.style.width = targetWidth;
             });
         }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            generateStatAccordion(hardSkills, 'hard-skills-container');
+            generateStatAccordion(traits, 'traits-container');
+            generatePortfolioAccordion();
+            
+            // Allow progress bars to animate on initial load if starting on stats page
+            // (Current default is 'page-intro', so it animates when switching tabs)
+        });
 
     </script>
 </body>
